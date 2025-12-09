@@ -15,8 +15,6 @@
         
         /* Smooth Scrolling for Modal */
         .modal-scroll { scroll-behavior: smooth; }
-        
-        /* Scrollbar Styling */
         .modal-scroll::-webkit-scrollbar { width: 8px; }
         .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; border: 2px solid #f1f1f1; }
@@ -122,10 +120,7 @@
 
     <!-- Improved Modal (Body Scroll Locked) -->
     <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <!-- Backdrop -->
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
-        <!-- Modal -->
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll">
             <div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20">
                 <h3 class="text-xl font-bold text-gray-800">Report New Issue</h3>
@@ -208,7 +203,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEh3NbEnMXcFJUnhcfPPPP7_KURFIVVevfvuOG5zJO47JPssDtya7w1tBqySI2d0nnKQ/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyClh6YxCydhuZs9qSPHBvzzvP_tyiwOJW_Fr_EXwpOvaqpbNdJ3IpdSWVintDVIF8U/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
         let allData = [];
@@ -230,11 +225,17 @@
 
         async function fetchData() {
             try {
-                const res = await fetch(SCRIPT_URL);
+                // Modified fetch options to follow redirects explicitly
+                const res = await fetch(SCRIPT_URL, { redirect: "follow" });
+                
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+                }
                 const data = await res.json();
                 if(data.error) throw new Error(data.error);
                 
-                allData = data.reverse(); 
+                // FIXED: Explicitly sort by ID Descending (Newest ID First)
+                allData = data.sort((a, b) => parseInt(b.id) - parseInt(a.id)); 
                 filteredData = [...allData];
                 
                 document.getElementById('loader').classList.add('hidden');
@@ -245,8 +246,13 @@
                 populateFilters(); 
                 updateDashboard();
             } catch (err) {
-                console.error(err);
-                alert("Error: " + err.message);
+                console.error("Fetch Data Error:", err);
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('connection-status').innerText = "Error";
+                document.getElementById('connection-status').className = "text-xs font-normal text-red-700 ml-2 border border-red-200 bg-red-100 px-2 py-1 rounded-full";
+                
+                // User-friendly Error Message
+                alert("Connection Error!\n\nDetails: " + err.message + "\n\nTroubleshooting:\n1. Ensure Google Apps Script is deployed as 'Web App'.\n2. 'Execute as' should be 'Me'.\n3. 'Who has access' MUST be 'Anyone'.\n4. Check internet connection.");
             }
         }
 
@@ -265,7 +271,7 @@
             const modSelect = document.getElementById('modal-module');
             modSelect.innerHTML = '<option value="">Select Module</option>';
             modules.forEach(m => { modSelect.innerHTML += `<option value="${m}">${m}</option>`; });
-            if(modules.size === 0) { ['Auth', 'UI/UX', 'Backend', 'Database'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`); }
+            if(modules.size === 0) { ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`); }
 
             const priSelect = document.getElementById('modal-priority');
             priSelect.innerHTML = '<option value="">Select Priority</option>';
@@ -287,9 +293,7 @@
         function openModal() {
             const modal = document.getElementById('issueModal');
             modal.classList.remove('hidden');
-            // LOCK BODY SCROLL
             document.body.classList.add('overflow-hidden');
-            
             const nextId = calculateNextId();
             document.getElementById('modal-id').value = nextId;
             populateModalDropdowns();
@@ -297,7 +301,6 @@
 
         function closeModal() { 
             document.getElementById('issueModal').classList.add('hidden');
-            // UNLOCK BODY SCROLL
             document.body.classList.remove('overflow-hidden');
         }
 
@@ -327,22 +330,55 @@
                     document.getElementById('upload-status-text').innerText = "Authorizing...";
                     document.getElementById('upload-status-text').classList.remove('hidden');
                     
-                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken");
+                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken", { redirect: "follow" });
+                    
+                    if (!tokenRes.ok) {
+                       throw new Error("Failed to get token from Script.");
+                    }
+
                     const tokenData = await tokenRes.json();
-                    if(!tokenData.token) throw new Error("Token Error");
+                    
+                    if(!tokenData || !tokenData.token) {
+                        console.error("Token Response Error:", tokenData);
+                        throw new Error("Could not retrieve Access Token from Script. Check 'doGet' in Code.gs.");
+                    }
                     const accessToken = tokenData.token;
 
                     const file = fileInput.files[0];
                     document.getElementById('upload-progress-container').classList.remove('hidden');
                     
                     const metadata = { name: file.name, mimeType: file.type, parents: [DRIVE_FOLDER_ID] };
+                    
                     const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
                         method: 'POST',
                         headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
                         body: JSON.stringify(metadata)
                     });
 
-                    if(!initRes.ok) throw new Error("Upload Init Failed");
+                    // ERROR TRAP HERE: If 403, scope issue. If 404, folder ID issue.
+                    if(!initRes.ok) {
+                        const errText = await initRes.text();
+                        console.error("Drive Init Failed:", initRes.status, errText);
+                        
+                        let errorMsg = `Upload Init Failed (${initRes.status})`;
+                        try {
+                            const errJson = JSON.parse(errText);
+                            if (errJson.error && errJson.error.message) {
+                                errorMsg += ": " + errJson.error.message;
+                            }
+                        } catch(e) {}
+
+                        if(initRes.status === 403) {
+                             if (!errorMsg.includes("Google Drive API")) {
+                                 errorMsg = "Permission Denied (403). 1. Enable Drive API in GCP Console. 2. Update appsscript.json.";
+                             }
+                        } else if(initRes.status === 404) {
+                            errorMsg = "Folder Not Found (404). Check DRIVE_FOLDER_ID.";
+                        }
+                        
+                        throw new Error(errorMsg);
+                    }
+                    
                     const locationUrl = initRes.headers.get('Location');
 
                     const uploadedFile = await new Promise((resolve, reject) => {
@@ -357,9 +393,9 @@
                         };
                         xhr.onload = () => {
                             if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText));
-                            else reject("Upload Failed");
+                            else reject("Upload Failed: " + xhr.statusText);
                         };
-                        xhr.onerror = () => reject("Network Error");
+                        xhr.onerror = () => reject("Network Error during upload");
                         xhr.send(file);
                     });
                     finalLink = `https://drive.google.com/file/d/${uploadedFile.id}/view`;
@@ -378,9 +414,14 @@
 
                 const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(formData),
+                    // No redirect: follow here because POST requests in GAS are tricky with redirects, but usually default is fine.
                 });
                 
+                if (!res.ok) {
+                    throw new Error("Failed to submit to sheet. Status: " + res.status);
+                }
+
                 const result = await res.json();
                 if(result.status === 'success') {
                     alert("Success! Issue #" + result.id + " Created.");
@@ -391,7 +432,7 @@
                     document.getElementById('file-name-display').innerText = "No file chosen";
                     fetchData(); 
                 } else {
-                    throw new Error("Sheet Save Failed");
+                    throw new Error("Sheet Save Failed: " + (result.message || "Unknown error"));
                 }
 
             } catch (err) {
@@ -436,7 +477,6 @@
                 data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#7c3aed'] }] },
                 options: { 
                     maintainAspectRatio: false,
-                    // ADDED ANIMATION CONFIG
                     animation: {
                         duration: 800,
                         easing: 'easeOutQuart'
@@ -448,7 +488,6 @@
                 data: { labels: Object.keys(aCounts), datasets: [{ label: 'Tasks', data: Object.values(aCounts), backgroundColor: '#3b82f6' }] },
                 options: { 
                     maintainAspectRatio: false,
-                    // ADDED ANIMATION CONFIG
                     animation: {
                         duration: 800,
                         easing: 'easeOutQuart'

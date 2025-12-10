@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TalentWale Bug Tracker</title>
+    <title>Bug Tracker Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,12 +13,10 @@
         .loader { border-top-color: #3498db; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Smooth Scrolling for Modal */
         .modal-scroll { scroll-behavior: smooth; }
         .modal-scroll::-webkit-scrollbar { width: 8px; }
-        .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; border: 2px solid #f1f1f1; }
-        .modal-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -28,7 +26,7 @@
         <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fa-solid fa-bug text-red-600 text-2xl mr-3"></i>
-                <h1 class="text-xl font-bold">TalentWale Dashboard <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
+                <h1 class="text-xl font-bold">Bug Tracker Pro <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
             </div>
             <div class="flex gap-3">
                 <button onclick="openAssignSelector()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
@@ -41,7 +39,7 @@
         </div>
     </nav>
 
-    <!-- Content -->
+    <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 pt-24 pb-10">
         <div id="loader" class="flex justify-center items-center py-20">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
@@ -80,23 +78,36 @@
                 <div class="bg-white p-6 rounded-lg card-shadow">
                     <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center">
                         <span>Assignee Workload</span>
-                        <span class="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Filtered Data</span>
+                        <span class="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Sorted (High to Low)</span>
                     </h3>
                     <div class="h-64"><canvas id="assigneeChart"></canvas></div>
                 </div>
             </div>
 
-            <!-- Filters -->
-            <div class="bg-white p-4 rounded-lg card-shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <select id="filter-module" class="border p-2 rounded bg-gray-50 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"><option value="">All Modules</option></select>
-                <select id="filter-priority" class="border p-2 rounded bg-gray-50 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"><option value="">All Priorities</option></select>
-                <select id="filter-reported" class="border p-2 rounded bg-gray-50 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"><option value="">All Reporters</option></select>
-                <select id="filter-assignee" class="border p-2 rounded bg-gray-50 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"><option value="">All Assignees</option></select>
+            <!-- Filter Header & Search Section -->
+            <div class="bg-white p-5 rounded-lg card-shadow mb-6">
+                <div class="flex items-center gap-2 mb-4 border-b pb-2">
+                    <i class="fa-solid fa-filter text-indigo-600"></i>
+                    <h3 class="text-lg font-bold text-gray-800">Advanced Filters & Search</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Search</label>
+                        <div class="relative">
+                            <input type="text" id="global-search" placeholder="Search..." class="w-full border border-gray-300 rounded-lg p-2 pl-8 text-sm focus:ring-2 focus:ring-indigo-500">
+                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i></div>
+                        </div>
+                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Module</label><select id="filter-module" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Modules</option></select></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Priority</label><select id="filter-priority" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Priorities</option></select></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Reported By</label><select id="filter-reported" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Reporters</option></select></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label><select id="filter-assignee" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Assignees</option></select></div>
+                </div>
             </div>
 
             <!-- Table -->
             <div class="bg-white rounded-lg card-shadow overflow-hidden">
-                <div class="p-4 border-b flex justify-between bg-gray-50">
+                <div class="p-4 border-b flex justify-between bg-gray-50 items-center">
                     <h3 class="font-bold text-gray-700">Issue Details</h3>
                     <select id="rows-per-page" class="border rounded p-1 text-sm bg-white"><option value="10">10</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select>
                 </div>
@@ -104,9 +115,14 @@
                     <table class="w-full text-left text-sm">
                         <thead class="bg-gray-100 uppercase text-xs text-gray-600 sticky top-0">
                             <tr>
-                                <th class="p-3 border-b">ID</th><th class="p-3 border-b">Module</th><th class="p-3 border-b">Date</th>
-                                <th class="p-3 border-b w-1/3">Description</th><th class="p-3 border-b">Link</th>
-                                <th class="p-3 border-b">Priority</th><th class="p-3 border-b">Assign</th><th class="p-3 border-b">Status</th>
+                                <th class="p-3 border-b w-[5%]">ID</th>
+                                <th class="p-3 border-b w-[10%]">Module</th>
+                                <th class="p-3 border-b w-[10%]">Date</th>
+                                <th class="p-3 border-b w-[30%]">Description</th>
+                                <th class="p-3 border-b w-[10%]">Attachment</th>
+                                <th class="p-3 border-b w-[10%]">Priority</th>
+                                <th class="p-3 border-b w-[10%]">Assign</th>
+                                <th class="p-3 border-b w-[15%]">Status</th>
                             </tr>
                         </thead>
                         <tbody id="table-body" class="divide-y divide-gray-100"></tbody>
@@ -131,7 +147,6 @@
                 <h3 class="text-xl font-bold text-gray-800">Report New Issue</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
-            
             <form id="issueForm" onsubmit="submitIssue(event)" class="space-y-3">
                 <div class="mb-2">
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue ID (Next)</label>
@@ -154,15 +169,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-                    <textarea id="modal-desc" required placeholder="Describe the issue in detail..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 h-20 resize-none"></textarea>
+                    <textarea id="modal-desc" required placeholder="Describe the issue..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 h-20 resize-none"></textarea>
                 </div>
                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Evidence / Attachment</label>
                     <div class="flex flex-col gap-2">
-                        <input type="url" id="modal-link" placeholder="Paste external link here (Optional)" class="w-full border border-gray-300 p-2 rounded text-sm">
+                        <input type="url" id="modal-link" placeholder="Paste external link (Optional)" class="w-full border border-gray-300 p-2 rounded text-sm">
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-bold text-gray-500 uppercase">OR Upload</span>
-                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded shadow-sm text-sm flex items-center gap-2 transition">
+                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded shadow-sm text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-cloud-arrow-up text-blue-500"></i> Choose File
                                 <input type="file" id="modal-file" class="hidden" onchange="updateFileName()">
                             </label>
@@ -176,15 +191,13 @@
                 </div>
                 <div class="flex justify-end gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-sm">Cancel</button>
-                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg font-medium transition flex items-center gap-2 text-sm">
-                        <span>Submit Issue</span> <i class="fa-solid fa-paper-plane text-xs"></i>
-                    </button>
+                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md font-medium text-sm">Submit Issue</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 2: ASSIGN SELECTOR (Step 1) -->
+    <!-- MODAL 2: ASSIGN SELECTOR -->
     <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeAssignSelector()"></div>
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative z-10 transform transition-all scale-100 mx-4">
@@ -202,12 +215,10 @@
         </div>
     </div>
 
-    <!-- MODAL 3: ASSIGN ISSUE (Step 2 - The Wizard) -->
+    <!-- MODAL 3: ASSIGN ISSUE (WIZARD) -->
     <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll">
-            
-            <!-- Header with Info -->
             <div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20">
                 <div>
                     <h3 class="text-xl font-bold text-gray-800">Assign Issues</h3>
@@ -215,15 +226,12 @@
                 </div>
                 <button onclick="closeAssignModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
-
             <div id="assign-loading" class="hidden text-center py-10">
                 <i class="fa-solid fa-spinner fa-spin text-3xl text-indigo-500"></i>
                 <p class="mt-2 text-gray-500">Updating...</p>
             </div>
-
             <form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-3">
-                <input type="hidden" id="assign-row-index"> <!-- Hidden Row Index -->
-                
+                <input type="hidden" id="assign-row-index"> 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue ID</label>
@@ -234,43 +242,29 @@
                         <input type="text" id="assign-date" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <!-- STATIC Module (Read-only) -->
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Module</label>
                         <input type="text" id="assign-module" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
                     </div>
                     <div>
-                        <!-- STATIC Priority (Read-only) -->
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Priority</label>
                         <input type="text" id="assign-priority" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
                     </div>
                 </div>
-
                 <div>
-                    <!-- EDITABLE Description -->
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Description (Editable)</label>
                     <textarea id="assign-desc" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 h-20 resize-none bg-white"></textarea>
                 </div>
-
                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
                     <span class="text-sm font-bold text-gray-700">Attachment:</span>
-                    <div id="assign-link-container">
-                        <!-- Link will be injected here -->
-                        <span class="text-gray-400 italic text-sm">No attachment</span>
-                    </div>
+                    <div id="assign-link-container"><span class="text-gray-400 italic text-sm">No attachment</span></div>
                 </div>
-
                 <div class="border-t pt-3 mt-3">
-                    <!-- EDITABLE Developer Selection -->
                     <label class="block text-sm font-bold text-indigo-700 mb-1">Assign To Developer <span class="text-red-500">*</span></label>
                     <input list="developers-list" id="assign-dev" required placeholder="Select Developer..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
-                    <datalist id="developers-list">
-                        <!-- Dynamic Developers will be injected here -->
-                    </datalist>
+                    <datalist id="developers-list"></datalist>
                 </div>
-
                 <div class="flex justify-between gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
                     <button type="button" onclick="skipAssignment()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm">Skip / Next</button>
                     <button type="submit" id="assign-submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md font-medium text-sm">Assign & Save</button>
@@ -280,13 +274,14 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEh3NbEnMXcFJUnhcfPPPP7_KURFIVVevfvuOG5zJO47JPssDtya7w1tBqySI2d0nnKQ/exec"; 
+        // NEW URL UPDATE HERE:
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyClh6YxCydhuZs9qSPHBvzzvP_tyiwOJW_Fr_EXwpOvaqpbNdJ3IpdSWVintDVIF8U/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
         let allData = [];
         let filteredData = [];
-        let assignableIssues = []; // Issues filtered by reporter for assignment
-        let currentAssignIndex = 0; // Pointer for assignment wizard
+        let assignableIssues = []; 
+        let currentAssignIndex = 0; 
         let currentPage = 1;
         let rowsPerPage = 10;
         let currentStatusFilter = 'Total';
@@ -297,6 +292,8 @@
             document.getElementById('prev-btn').addEventListener('click', () => { if(currentPage>1) {currentPage--; renderTable();} });
             document.getElementById('next-btn').addEventListener('click', () => { if(currentPage < Math.ceil(filteredData.length/rowsPerPage)) {currentPage++; renderTable();} });
             
+            document.getElementById('global-search').addEventListener('input', applyFilters);
+
             ['filter-module', 'filter-priority', 'filter-reported', 'filter-assignee'].forEach(id => {
                 document.getElementById(id).addEventListener('change', applyFilters);
             });
@@ -325,102 +322,26 @@
             }
         }
 
-        // --- ASSIGNMENT WIZARD LOGIC ---
-
-        function openAssignSelector() {
-            const reporters = new Set(allData.map(d => d.reported).filter(r => r));
-            const select = document.getElementById('assign-reporter-select');
-            select.innerHTML = '<option value="">Select a person...</option>';
-            reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`);
-            document.getElementById('assignSelectorModal').classList.remove('hidden');
-        }
-
-        function closeAssignSelector() {
-            document.getElementById('assignSelectorModal').classList.add('hidden');
-        }
-
-        function startAssignment() {
-            const reporter = document.getElementById('assign-reporter-select').value;
-            if(!reporter) { alert("Please select a reporter"); return; }
-
-            // MODIFIED FILTER: Filter issues by reporter AND ensure Assign column is empty/Unassigned
-            assignableIssues = allData.filter(d => 
-                d.reported === reporter && 
-                (!d.assign || d.assign === "Unassigned" || d.assign.trim() === "")
-            );
-            
-            if(assignableIssues.length === 0) {
-                alert("No pending/unassigned issues found for " + reporter);
-                return;
+        // --- STATUS UPDATE FUNCTION ---
+        async function updateStatus(id, rowIndex, newStatus) {
+            const selectElem = document.querySelector(`select[data-id="${id}"]`);
+            if(selectElem) {
+                selectElem.disabled = true;
+                selectElem.classList.add('opacity-50', 'cursor-wait');
             }
 
-            document.getElementById('assign-reporter-name').innerText = reporter;
-            currentAssignIndex = 0;
+            const item = allData.find(d => d.id == id);
             
-            // Populate Dropdowns inside Assign Modal
-            // No longer needed for static fields but still needed for Developer List
-            populateAssignDropdowns();
-
-            closeAssignSelector();
-            document.getElementById('assignModal').classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-            
-            loadAssignIssue();
-        }
-
-        function populateAssignDropdowns() {
-            // Only Developers List is needed now
-            const developers = new Set(allData.map(d => d.assign).filter(a => a && a !== 'Unassigned' && a.trim() !== ''));
-            const devList = document.getElementById('developers-list');
-            devList.innerHTML = '';
-            developers.forEach(dev => devList.innerHTML += `<option value="${dev}">`);
-        }
-
-        function loadAssignIssue() {
-            if (currentAssignIndex >= assignableIssues.length) {
-                alert("All issues for this reporter have been reviewed!");
-                closeAssignModal();
-                return;
-            }
-
-            const issue = assignableIssues[currentAssignIndex];
-            
-            // Fill Form - Static Fields
-            document.getElementById('assign-id').value = issue.id;
-            document.getElementById('assign-date').value = issue.date;
-            document.getElementById('assign-module').value = issue.module || "Employer"; // Now an Input
-            document.getElementById('assign-priority').value = issue.priority || "Medium"; // Now an Input
-            
-            // Editable Fields
-            document.getElementById('assign-desc').value = issue.description;
-            document.getElementById('assign-dev').value = ""; // Clear dev field
-
-            document.getElementById('assign-row-index').value = issue.rowIndex; 
-
-            // Handle Link
-            const linkContainer = document.getElementById('assign-link-container');
-            if (issue.link) {
-                const isDrive = issue.link.includes('drive.google.com');
-                linkContainer.innerHTML = `<a href="${issue.link}" target="_blank" class="text-blue-600 flex items-center gap-1 font-semibold hover:underline">${isDrive ? '<i class="fa-brands fa-google-drive"></i> Open Drive File' : '<i class="fa-solid fa-link"></i> Open Link'}</a>`;
-            } else {
-                linkContainer.innerHTML = '<span class="text-gray-400 italic text-sm">No attachment</span>';
-            }
-        }
-
-        async function submitAssignment(e) {
-            e.preventDefault();
-            const btn = document.getElementById('assign-submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
             const payload = {
                 action: "update",
-                rowIndex: document.getElementById('assign-row-index').value,
-                id: document.getElementById('assign-id').value,
-                module: document.getElementById('assign-module').value, // Will send static value
-                priority: document.getElementById('assign-priority').value, // Will send static value
-                description: document.getElementById('assign-desc').value, // Editable
-                assignee: document.getElementById('assign-dev').value // Editable
+                rowIndex: rowIndex,
+                id: id,
+                status: newStatus,
+                module: item ? item.module : "Default", 
+                priority: item ? item.priority : "-",
+                reported: item ? item.reported : "-",
+                description: item ? item.description : "-",
+                assignee: item ? item.assign : null 
             };
 
             try {
@@ -428,121 +349,26 @@
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                
                 const result = await res.json();
+                
                 if(result.status === 'success') {
-                    // Update Local Data to reflect changes immediately
-                    const target = assignableIssues[currentAssignIndex];
-                    // Module/Priority won't change but Description and Assignee will
-                    target.description = payload.description;
-                    target.assign = payload.assignee;
-                    
-                    // Move to next
-                    currentAssignIndex++;
-                    loadAssignIssue();
+                    if(item) item.status = newStatus;
+                    updateDashboard(); 
                 } else {
                     throw new Error(result.message);
                 }
             } catch (err) {
-                alert("Update Failed: " + err.message);
+                alert("Status Update Failed: " + err.message);
+                if(selectElem) selectElem.disabled = false;
             } finally {
-                btn.disabled = false;
-                btn.innerText = "Assign & Save";
+                if(selectElem) {
+                    selectElem.disabled = false;
+                    selectElem.classList.remove('opacity-50', 'cursor-wait');
+                }
             }
         }
 
-        function skipAssignment() {
-            currentAssignIndex++;
-            loadAssignIssue();
-        }
-
-        function closeAssignModal() {
-            document.getElementById('assignModal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-            renderTable();
-            renderCharts();
-        }
-
-        // --- Standard Logic (Same as before) ---
-        function populateFilters() {
-            const modules = new Set(allData.map(d => d.module));
-            const priorities = new Set(allData.map(d => d.priority));
-            const reported = new Set(allData.map(d => d.reported));
-            const assignees = new Set(allData.map(d => d.assign));
-            
-            fillSelect('filter-module', modules);
-            fillSelect('filter-priority', priorities);
-            fillSelect('filter-reported', reported);
-            fillSelect('filter-assignee', assignees);
-            
-            // Populate Report Modal Dropdowns
-            const modSelect = document.getElementById('modal-module');
-            modSelect.innerHTML = '<option value="">Select Module</option>';
-            ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
-            
-            const priSelect = document.getElementById('modal-priority');
-            priSelect.innerHTML = '<option value="">Select Priority</option>';
-            ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
-
-            const repList = document.getElementById('reporters-list');
-            repList.innerHTML = '';
-            reported.forEach(r => { if(r) repList.innerHTML += `<option value="${r}">`; });
-        }
-
-        function fillSelect(id, set) {
-            const el = document.getElementById(id);
-            el.innerHTML = '<option value="">All</option>';
-            set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; });
-        }
-
-        function applyFilters() {
-            const filters = {
-                module: document.getElementById('filter-module').value,
-                priority: document.getElementById('filter-priority').value,
-                reported: document.getElementById('filter-reported').value,
-                assignee: document.getElementById('filter-assignee').value
-            };
-            filteredData = allData.filter(d => {
-                let statusMatch = true;
-                if(currentStatusFilter !== 'Total') {
-                    const s = (d.status || "").toLowerCase();
-                    if(currentStatusFilter === 'Pending') statusMatch = s === 'pending';
-                    else if(currentStatusFilter === 'Done') statusMatch = s === 'done';
-                    else statusMatch = (s !== 'pending' && s !== 'done');
-                }
-                return statusMatch &&
-                       (!filters.module || d.module === filters.module) &&
-                       (!filters.priority || d.priority === filters.priority) &&
-                       (!filters.reported || d.reported === filters.reported) &&
-                       (!filters.assignee || d.assign === filters.assignee);
-            });
-            currentPage = 1;
-            renderTable();
-            renderCharts();
-        }
-
-        function filterByStatus(status) { currentStatusFilter = status; applyFilters(); }
-
-        function renderCharts() {
-            const pCounts = {}; const aCounts = {};
-            filteredData.forEach(d => {
-                pCounts[d.priority || "Unknown"] = (pCounts[d.priority || "Unknown"] || 0) + 1;
-                aCounts[d.assign || "Unassigned"] = (aCounts[d.assign || "Unassigned"] || 0) + 1;
-            });
-            // Chart Logic (Same as before)
-            const priorityParent = document.getElementById('priorityChart').parentNode;
-            priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
-            new Chart(document.getElementById('priorityChart'), {
-                type: 'doughnut', data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#7c3aed'] }] }, options: { maintainAspectRatio: false, animation: { duration: 800 } }
-            });
-            
-            const assignParent = document.getElementById('assigneeChart').parentNode;
-            assignParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
-            new Chart(document.getElementById('assigneeChart'), {
-                type: 'bar', data: { labels: Object.keys(aCounts), datasets: [{ label: 'Tasks', data: Object.values(aCounts), backgroundColor: '#3b82f6' }] }, options: { maintainAspectRatio: false, animation: { duration: 800 } }
-            });
-        }
-
+        // --- RENDER TABLE ---
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -552,14 +378,28 @@
             
             if(pageData.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center">No Data Found</td></tr>'; return; }
 
+            const uniqueStatuses = new Set(allData.map(d => d.status).filter(s => s && s.trim() !== ""));
+            const statusOptions = Array.from(uniqueStatuses).sort();
+
             pageData.forEach(row => {
-                let linkHtml = '<span class="text-gray-400 italic text-xs">No Link</span>';
+                let linkHtml = '<span class="text-gray-300 text-xs italic">No Attach</span>';
                 if(row.link) {
                     const isDrive = row.link.includes('drive.google.com');
-                    linkHtml = `<a href="${row.link}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-blue-700 hover:bg-blue-100 hover:text-blue-900 border border-gray-200 rounded-md text-xs font-semibold transition-all duration-200 group">
-                        ${isDrive ? '<i class="fa-brands fa-google-drive text-green-600 text-sm group-hover:scale-110 transition"></i>' : '<i class="fa-solid fa-link text-gray-500 group-hover:text-blue-600 text-sm transition"></i>'}
-                        <span>Open File</span>
-                    </a>`;
+                    if(isDrive) {
+                        linkHtml = `
+                        <a href="${row.link}" target="_blank" title="Open Drive File" 
+                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow hover:bg-gray-50 transition text-[11px] font-semibold text-gray-700 group">
+                            <i class="fa-brands fa-google-drive text-green-600 text-sm"></i>
+                            <span class="group-hover:text-green-700">View</span>
+                        </a>`;
+                    } else {
+                        linkHtml = `
+                        <a href="${row.link}" target="_blank" title="Open External Link"
+                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-50 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-200 transition text-[11px] font-semibold text-blue-600 group">
+                            <i class="fa-solid fa-link text-xs"></i>
+                            <span class="group-hover:underline">View</span>
+                        </a>`;
+                    }
                 }
                 
                 let pColor = 'bg-gray-100 text-gray-800';
@@ -567,22 +407,43 @@
                 else if(row.priority === 'Medium') pColor = 'bg-yellow-50 text-yellow-700 border border-yellow-100';
                 else if(row.priority === 'Low') pColor = 'bg-green-50 text-green-700 border border-green-100';
                 
+                let statusSelectHtml = `<select data-id="${row.id}" onchange="updateStatus('${row.id}', '${row.rowIndex}', this.value)" class="bg-transparent text-xs font-bold uppercase cursor-pointer border-none focus:ring-0 p-0 pr-4 w-auto max-w-[100px] truncate">`;
+                
+                if (!row.status || row.status.trim() === "") {
+                    statusSelectHtml += `<option value="" selected class="text-gray-400 italic">--</option>`;
+                }
+
+                statusOptions.forEach(opt => {
+                    const selected = (row.status === opt) ? 'selected' : '';
+                    statusSelectHtml += `<option value="${opt}" ${selected}>${opt}</option>`;
+                });
+                statusSelectHtml += `</select>`;
+
+                let statusColorClass = 'text-gray-600';
+                if(row.status === 'Done') statusColorClass = 'text-green-600';
+                else if(row.status === 'Pending') statusColorClass = 'text-yellow-600';
+                else if(row.status === 'In Progress') statusColorClass = 'text-blue-600';
+                else if(row.status === 'Dropped') statusColorClass = 'text-red-500';
+
                 const tr = `
                     <tr class="border-b hover:bg-gray-50 transition duration-150">
                         <td class="p-3 font-mono font-bold text-gray-500 text-xs">#${row.id}</td>
                         <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded text-xs font-semibold">${row.module}</span></td>
                         <td class="p-3 text-xs text-gray-500">${row.date}</td>
-                        <td class="p-3 text-gray-700 text-sm leading-snug">${row.description}</td>
+                        <td class="p-3 text-gray-700 text-sm leading-snug w-1/3 min-w-[250px]">${row.description}</td>
                         <td class="p-3">${linkHtml}</td>
                         <td class="p-3"><span class="${pColor} px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide">${row.priority}</span></td>
                         <td class="p-3">
                             <div class="flex items-center gap-2">
-                                <div class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold border border-indigo-200">${row.assign.charAt(0)}</div>
-                                <span class="text-sm text-gray-600">${row.assign}</span>
+                                <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold border border-indigo-200">${row.assign.charAt(0)}</div>
+                                <span class="text-sm text-gray-600 font-medium">${row.assign}</span>
                             </div>
                         </td>
-                        <td class="p-3 font-bold text-xs ${row.status==='Done'?'text-green-600':(row.status==='Pending'?'text-yellow-600':'text-purple-600')}">
-                            ${row.status === 'Done' ? '<i class="fa-solid fa-check mr-1"></i>' : ''} ${row.status}
+                        <td class="p-3">
+                            <div class="flex items-center ${statusColorClass}">
+                                <i class="fa-solid fa-circle text-[8px] mr-2"></i>
+                                ${statusSelectHtml}
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -590,78 +451,145 @@
             });
         }
 
-        // Functions for Report Issue Modal (Same as before)
-        function calculateNextId() {
-            if (allData.length === 0) return 1001;
-            const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id));
-            const maxId = ids.length > 0 ? Math.max(...ids) : 1000;
-            return maxId + 1;
+        function updateDashboard() {
+            let counts = { Total: allData.length, Pending: 0, Done: 0, Other: 0 };
+            
+            allData.forEach(d => {
+                const s = (d.status || "").toLowerCase().trim();
+                
+                if(s === 'pending') {
+                    counts.Pending++;
+                } else if(s === 'done') {
+                    counts.Done++;
+                } else {
+                    counts.Other++;
+                }
+            });
+            
+            document.getElementById('count-total').innerText = counts.Total;
+            document.getElementById('count-pending').innerText = counts.Pending;
+            document.getElementById('count-done').innerText = counts.Done;
+            document.getElementById('count-other').innerText = counts.Other;
+            
+            applyFilters();
         }
-        function openModal() {
-            const modal = document.getElementById('issueModal');
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-            document.getElementById('modal-id').value = calculateNextId();
+
+        function renderCharts() {
+            const pCounts = {}; const aCounts = {};
+            filteredData.forEach(d => {
+                pCounts[d.priority || "Unknown"] = (pCounts[d.priority || "Unknown"] || 0) + 1;
+                const assignee = (d.assign && d.assign !== 'Unassigned') ? d.assign : 'Unassigned';
+                aCounts[assignee] = (aCounts[assignee] || 0) + 1;
+            });
+            const priorityParent = document.getElementById('priorityChart').parentNode;
+            priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
+            new Chart(document.getElementById('priorityChart'), {
+                type: 'doughnut', 
+                data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#7c3aed'] }] }, 
+                options: { maintainAspectRatio: false, animation: { duration: 800, easing: 'easeOutQuart' } }
+            });
+            
+            // SORT ASSIGNEES (High to Low)
+            const sortedAssignees = Object.entries(aCounts).sort((a, b) => b[1] - a[1]);
+            const labelsSorted = sortedAssignees.map(item => item[0]);
+            const dataSorted = sortedAssignees.map(item => item[1]);
+
+            const assignParent = document.getElementById('assigneeChart').parentNode;
+            assignParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
+            const barColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+            new Chart(document.getElementById('assigneeChart'), {
+                type: 'bar',
+                data: { labels: labelsSorted, datasets: [{ label: 'Tasks', data: dataSorted, backgroundColor: barColors, borderRadius: 4 }] },
+                options: { maintainAspectRatio: false, animation: { duration: 800, easing: 'easeOutQuart' }, plugins: { legend: { display: false } } }
+            });
         }
-        function closeModal() {
-            document.getElementById('issueModal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
+
+        function populateFilters() {
+            const modules = new Set(allData.map(d => d.module));
+            const priorities = new Set(allData.map(d => d.priority));
+            const reported = new Set(allData.map(d => d.reported));
+            const assignees = new Set(allData.map(d => d.assign));
+            fillSelect('filter-module', modules);
+            fillSelect('filter-priority', priorities);
+            fillSelect('filter-reported', reported);
+            fillSelect('filter-assignee', assignees);
+            const modSelect = document.getElementById('modal-module');
+            modSelect.innerHTML = '<option value="">Select Module</option>';
+            ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
+            const priSelect = document.getElementById('modal-priority');
+            priSelect.innerHTML = '<option value="">Select Priority</option>';
+            ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
+            const repList = document.getElementById('reporters-list');
+            repList.innerHTML = '';
+            reported.forEach(r => { if(r) repList.innerHTML += `<option value="${r}">`; });
         }
-        function updateFileName() {
-            const fileInput = document.getElementById('modal-file');
-            const display = document.getElementById('file-name-display');
-            if (fileInput.files.length > 0) { display.innerText = fileInput.files[0].name; display.classList.add('text-blue-600', 'font-semibold'); } 
-            else { display.innerText = "No file chosen"; display.classList.remove('text-blue-600', 'font-semibold'); }
+        function fillSelect(id, set) { const el = document.getElementById(id); el.innerHTML = '<option value="">All</option>'; set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; }); }
+        function applyFilters() {
+            const filters = { module: document.getElementById('filter-module').value, priority: document.getElementById('filter-priority').value, reported: document.getElementById('filter-reported').value, assignee: document.getElementById('filter-assignee').value, search: document.getElementById('global-search').value.toLowerCase() };
+            filteredData = allData.filter(d => {
+                let statusMatch = true;
+                if(currentStatusFilter !== 'Total') {
+                    const s = (d.status || "").toLowerCase();
+                    if(currentStatusFilter === 'Pending') statusMatch = s === 'pending';
+                    else if(currentStatusFilter === 'Done') statusMatch = s === 'done';
+                    else statusMatch = (s !== 'pending' && s !== 'done');
+                }
+                const matchesSearch = d.id.toString().includes(filters.search) || d.description.toLowerCase().includes(filters.search) || d.module.toLowerCase().includes(filters.search) || (d.reported && d.reported.toLowerCase().includes(filters.search));
+                return statusMatch && matchesSearch && (!filters.module || d.module === filters.module) && (!filters.priority || d.priority === filters.priority) && (!filters.reported || d.reported === filters.reported) && (!filters.assignee || d.assign === filters.assignee);
+            });
+            currentPage = 1; renderTable(); renderCharts();
         }
+        function filterByStatus(status) { currentStatusFilter = status; applyFilters(); }
+        function calculateNextId() { if (allData.length === 0) return 1001; const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id)); const maxId = ids.length > 0 ? Math.max(...ids) : 1000; return maxId + 1; }
+        function openModal() { const modal = document.getElementById('issueModal'); modal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); document.getElementById('modal-id').value = calculateNextId(); populateFilters(); }
+        function closeModal() { document.getElementById('issueModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+        function updateFileName() { const fileInput = document.getElementById('modal-file'); const display = document.getElementById('file-name-display'); if (fileInput.files.length > 0) { display.innerText = fileInput.files[0].name; display.classList.add('text-blue-600', 'font-semibold'); } else { display.innerText = "No file chosen"; display.classList.remove('text-blue-600', 'font-semibold'); } }
         async function submitIssue(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const fileInput = document.getElementById('modal-file');
-            let finalLink = document.getElementById('modal-link').value;
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            e.preventDefault(); const btn = document.getElementById('submit-btn'); const fileInput = document.getElementById('modal-file'); let finalLink = document.getElementById('modal-link').value; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
             try {
                 if (fileInput.files.length > 0) {
-                    document.getElementById('upload-status-text').innerText = "Authorizing...";
-                    document.getElementById('upload-status-text').classList.remove('hidden');
-                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken");
-                    const tokenData = await tokenRes.json();
+                    document.getElementById('upload-status-text').innerText = "Authorizing..."; document.getElementById('upload-status-text').classList.remove('hidden');
+                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken"); const tokenData = await tokenRes.json();
                     if(!tokenData.token) throw new Error("Token Error");
-                    const file = fileInput.files[0];
-                    document.getElementById('upload-progress-container').classList.remove('hidden');
+                    const file = fileInput.files[0]; document.getElementById('upload-progress-container').classList.remove('hidden');
                     const metadata = { name: file.name, mimeType: file.type, parents: [DRIVE_FOLDER_ID] };
-                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
-                        method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json' }, body: JSON.stringify(metadata)
-                    });
+                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json' }, body: JSON.stringify(metadata) });
                     if(!initRes.ok) throw new Error("Upload Init Failed");
                     const locationUrl = initRes.headers.get('Location');
-                    const uploadedFile = await new Promise((resolve, reject) => {
-                        const xhr = new XMLHttpRequest(); xhr.open('PUT', locationUrl, true);
-                        xhr.upload.onprogress = (e) => { if (e.lengthComputable) { const percent = Math.round((e.loaded / e.total) * 100); document.getElementById('upload-progress-bar').style.width = percent + "%"; document.getElementById('upload-status-text').innerText = `Uploading: ${percent}%`; } };
-                        xhr.onload = () => { if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText)); else reject("Upload Failed"); };
-                        xhr.onerror = () => reject("Network Error"); xhr.send(file);
-                    });
+                    const uploadedFile = await new Promise((resolve, reject) => { const xhr = new XMLHttpRequest(); xhr.open('PUT', locationUrl, true); xhr.upload.onprogress = (e) => { if (e.lengthComputable) { const percent = Math.round((e.loaded / e.total) * 100); document.getElementById('upload-progress-bar').style.width = percent + "%"; document.getElementById('upload-status-text').innerText = `Uploading: ${percent}%`; } }; xhr.onload = () => { if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText)); else reject("Upload Failed"); }; xhr.onerror = () => reject("Network Error"); xhr.send(file); });
                     finalLink = `https://drive.google.com/file/d/${uploadedFile.id}/view`;
                 }
                 document.getElementById('upload-status-text').innerText = "Saving to Sheet...";
-                const formData = {
-                    action: "submit", module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value,
-                    reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink
-                };
+                const formData = { action: "submit", module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink };
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) });
                 const result = await res.json();
-                if(result.status === 'success') { alert("Success! Issue #" + result.id + " Created."); closeModal(); document.getElementById('issueForm').reset(); fetchData(); } 
-                else { throw new Error("Sheet Save Failed"); }
+                if(result.status === 'success') { alert("Success! Issue #" + result.id + " Created."); closeModal(); document.getElementById('issueForm').reset(); fetchData(); } else { throw new Error("Sheet Save Failed"); }
             } catch (err) { alert("Error: " + err.message); } finally { btn.disabled = false; btn.innerText = "Submit Issue"; }
         }
-        function updateDashboard() {
-            let counts = { Total: allData.length, Pending: 0, Done: 0, Other: 0 };
-            allData.forEach(d => {
-                const s = (d.status || "").toLowerCase();
-                if(s === 'pending') counts.Pending++; else if(s === 'done') counts.Done++; else counts.Other++;
-            });
-            document.getElementById('count-total').innerText = counts.Total; document.getElementById('count-pending').innerText = counts.Pending; document.getElementById('count-done').innerText = counts.Done; document.getElementById('count-other').innerText = counts.Other;
-            applyFilters();
+        function openAssignSelector() { const reporters = new Set(allData.map(d => d.reported).filter(r => r)); const select = document.getElementById('assign-reporter-select'); select.innerHTML = '<option value="">Select a person...</option>'; reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`); document.getElementById('assignSelectorModal').classList.remove('hidden'); }
+        function closeAssignSelector() { document.getElementById('assignSelectorModal').classList.add('hidden'); }
+        function startAssignment() {
+            const reporter = document.getElementById('assign-reporter-select').value;
+            if(!reporter) { alert("Please select a reporter"); return; }
+            assignableIssues = allData.filter(d => d.reported === reporter && (!d.assign || d.assign === "Unassigned" || d.assign.trim() === ""));
+            if(assignableIssues.length === 0) { alert("No pending/unassigned issues found for " + reporter); return; }
+            document.getElementById('assign-reporter-name').innerText = reporter; currentAssignIndex = 0; populateAssignDropdowns(); closeAssignSelector(); document.getElementById('assignModal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); loadAssignIssue();
         }
+        function populateAssignDropdowns() { const developers = new Set(allData.map(d => d.assign).filter(a => a && a !== 'Unassigned' && a.trim() !== '')); const devList = document.getElementById('developers-list'); devList.innerHTML = ''; developers.forEach(dev => devList.innerHTML += `<option value="${dev}">`); }
+        function loadAssignIssue() {
+            if (currentAssignIndex >= assignableIssues.length) { alert("All issues for this reporter have been reviewed!"); closeAssignModal(); return; }
+            const issue = assignableIssues[currentAssignIndex];
+            document.getElementById('assign-id').value = issue.id; document.getElementById('assign-date').value = issue.date; document.getElementById('assign-module').value = issue.module || "Employer"; document.getElementById('assign-priority').value = issue.priority || "Medium"; document.getElementById('assign-desc').value = issue.description; document.getElementById('assign-row-index').value = issue.rowIndex; document.getElementById('assign-dev').value = ""; 
+            const linkContainer = document.getElementById('assign-link-container');
+            if (issue.link) { const isDrive = issue.link.includes('drive.google.com'); linkContainer.innerHTML = `<a href="${issue.link}" target="_blank" class="text-blue-600 flex items-center gap-1 font-semibold hover:underline">${isDrive ? '<i class="fa-brands fa-google-drive"></i> Open Drive File' : '<i class="fa-solid fa-link"></i> Open Link'}</a>`; } else { linkContainer.innerHTML = '<span class="text-gray-400 italic text-sm">No attachment</span>'; }
+        }
+        async function submitAssignment(e) {
+            e.preventDefault(); const btn = document.getElementById('assign-submit-btn'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            const payload = { action: "update", rowIndex: document.getElementById('assign-row-index').value, id: document.getElementById('assign-id').value, module: document.getElementById('assign-module').value, priority: document.getElementById('assign-priority').value, description: document.getElementById('assign-desc').value, assignee: document.getElementById('assign-dev').value };
+            try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await res.json(); if(result.status === 'success') { const target = assignableIssues[currentAssignIndex]; target.description = payload.description; target.assign = payload.assignee; currentAssignIndex++; loadAssignIssue(); } else { throw new Error(result.message); } } catch (err) { alert("Update Failed: " + err.message); } finally { btn.disabled = false; btn.innerText = "Assign & Save"; }
+        }
+        function skipAssignment() { currentAssignIndex++; loadAssignIssue(); }
+        function closeAssignModal() { document.getElementById('assignModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); renderTable(); renderCharts(); }
     </script>
 </body>
 </html>

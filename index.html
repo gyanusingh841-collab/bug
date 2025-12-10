@@ -28,11 +28,16 @@
         <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fa-solid fa-bug text-red-600 text-2xl mr-3"></i>
-                <h1 class="text-xl font-bold">TalentWale Dashboard <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
+                <h1 class="text-xl font-bold">Bug Tracker Pro <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
             </div>
-            <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
-                <i class="fa-solid fa-plus"></i> Report Issue
-            </button>
+            <div class="flex gap-3">
+                <button onclick="openAssignSelector()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
+                    <i class="fa-solid fa-user-check"></i> Assign Issue
+                </button>
+                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
+                    <i class="fa-solid fa-plus"></i> Report Issue
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -118,15 +123,13 @@
         </div>
     </div>
 
-    <!-- Improved Modal (Body Scroll Locked) -->
+    <!-- MODAL 1: REPORT ISSUE -->
     <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll">
             <div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20">
                 <h3 class="text-xl font-bold text-gray-800">Report New Issue</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
-                </button>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
             
             <form id="issueForm" onsubmit="submitIssue(event)" class="space-y-3">
@@ -134,48 +137,29 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue ID (Next)</label>
                     <input type="text" id="modal-id" readonly class="w-full bg-blue-50 border border-blue-200 text-blue-800 font-bold p-2 rounded-lg text-center cursor-not-allowed">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Module <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <select id="modal-module" required class="w-full border border-gray-300 p-2 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
-                                <option value="">Select Module</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <i class="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
-                        </div>
+                        <select id="modal-module" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500"><option value="">Select Module</option></select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Priority <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <select id="modal-priority" required class="w-full border border-gray-300 p-2 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
-                                <option value="">Select Priority</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <i class="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
-                        </div>
+                        <select id="modal-priority" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500"><option value="">Select Priority</option></select>
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Reported By <span class="text-red-500">*</span></label>
-                    <input list="reporters-list" id="modal-reporter" required placeholder="Select or type name..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input list="reporters-list" id="modal-reporter" required placeholder="Select or type name..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
                     <datalist id="reporters-list"></datalist>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-                    <textarea id="modal-desc" required placeholder="Describe the issue in detail..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-20 resize-none"></textarea>
+                    <textarea id="modal-desc" required placeholder="Describe the issue in detail..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 h-20 resize-none"></textarea>
                 </div>
-                
                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Evidence / Attachment</label>
                     <div class="flex flex-col gap-2">
                         <input type="url" id="modal-link" placeholder="Paste external link here (Optional)" class="w-full border border-gray-300 p-2 rounded text-sm">
-                        
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-bold text-gray-500 uppercase">OR Upload</span>
                             <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded shadow-sm text-sm flex items-center gap-2 transition">
@@ -184,16 +168,14 @@
                             </label>
                             <span id="file-name-display" class="text-xs text-gray-500 italic truncate max-w-[150px]">No file chosen</span>
                         </div>
-
                         <div id="upload-progress-container" class="hidden w-full bg-gray-200 rounded-full h-2 mt-1">
                             <div id="upload-progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                         </div>
                         <p id="upload-status-text" class="text-xs text-green-600 font-semibold hidden text-center">Starting upload...</p>
                     </div>
                 </div>
-
                 <div class="flex justify-end gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition text-sm">Cancel</button>
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-sm">Cancel</button>
                     <button type="submit" id="submit-btn" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg font-medium transition flex items-center gap-2 text-sm">
                         <span>Submit Issue</span> <i class="fa-solid fa-paper-plane text-xs"></i>
                     </button>
@@ -202,12 +184,109 @@
         </div>
     </div>
 
+    <!-- MODAL 2: ASSIGN SELECTOR (Step 1) -->
+    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeAssignSelector()"></div>
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative z-10 transform transition-all scale-100 mx-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Who reported the issues?</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Select Reporter</label>
+                <select id="assign-reporter-select" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Select a person...</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeAssignSelector()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+                <button onclick="startAssignment()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Start Assigning</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ASSIGN ISSUE (Step 2 - The Wizard) -->
+    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll">
+            
+            <!-- Header with Info -->
+            <div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">Assign Issues</h3>
+                    <p class="text-xs text-gray-500">Reviewing issues reported by: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p>
+                </div>
+                <button onclick="closeAssignModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+
+            <div id="assign-loading" class="hidden text-center py-10">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-indigo-500"></i>
+                <p class="mt-2 text-gray-500">Updating...</p>
+            </div>
+
+            <form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-3">
+                <input type="hidden" id="assign-row-index"> <!-- Hidden Row Index -->
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue ID</label>
+                        <input type="text" id="assign-id" readonly class="w-full bg-gray-100 border border-gray-300 font-bold p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date</label>
+                        <input type="text" id="assign-date" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <!-- STATIC Module (Read-only) -->
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Module</label>
+                        <input type="text" id="assign-module" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <!-- STATIC Priority (Read-only) -->
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Priority</label>
+                        <input type="text" id="assign-priority" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <div>
+                    <!-- EDITABLE Description -->
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Description (Editable)</label>
+                    <textarea id="assign-desc" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 h-20 resize-none bg-white"></textarea>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
+                    <span class="text-sm font-bold text-gray-700">Attachment:</span>
+                    <div id="assign-link-container">
+                        <!-- Link will be injected here -->
+                        <span class="text-gray-400 italic text-sm">No attachment</span>
+                    </div>
+                </div>
+
+                <div class="border-t pt-3 mt-3">
+                    <!-- EDITABLE Developer Selection -->
+                    <label class="block text-sm font-bold text-indigo-700 mb-1">Assign To Developer <span class="text-red-500">*</span></label>
+                    <input list="developers-list" id="assign-dev" required placeholder="Select Developer..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
+                    <datalist id="developers-list">
+                        <!-- Dynamic Developers will be injected here -->
+                    </datalist>
+                </div>
+
+                <div class="flex justify-between gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
+                    <button type="button" onclick="skipAssignment()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm">Skip / Next</button>
+                    <button type="submit" id="assign-submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md font-medium text-sm">Assign & Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyClh6YxCydhuZs9qSPHBvzzvP_tyiwOJW_Fr_EXwpOvaqpbNdJ3IpdSWVintDVIF8U/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEh3NbEnMXcFJUnhcfPPPP7_KURFIVVevfvuOG5zJO47JPssDtya7w1tBqySI2d0nnKQ/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
         let allData = [];
         let filteredData = [];
+        let assignableIssues = []; // Issues filtered by reporter for assignment
+        let currentAssignIndex = 0; // Pointer for assignment wizard
         let currentPage = 1;
         let rowsPerPage = 10;
         let currentStatusFilter = 'Total';
@@ -225,16 +304,11 @@
 
         async function fetchData() {
             try {
-                // Modified fetch options to follow redirects explicitly
                 const res = await fetch(SCRIPT_URL, { redirect: "follow" });
-                
-                if (!res.ok) {
-                    throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
-                }
+                if (!res.ok) throw new Error("Failed to fetch");
                 const data = await res.json();
                 if(data.error) throw new Error(data.error);
                 
-                // FIXED: Explicitly sort by ID Descending (Newest ID First)
                 allData = data.sort((a, b) => parseInt(b.id) - parseInt(a.id)); 
                 filteredData = [...allData];
                 
@@ -246,259 +320,153 @@
                 populateFilters(); 
                 updateDashboard();
             } catch (err) {
-                console.error("Fetch Data Error:", err);
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('connection-status').innerText = "Error";
-                document.getElementById('connection-status').className = "text-xs font-normal text-red-700 ml-2 border border-red-200 bg-red-100 px-2 py-1 rounded-full";
-                
-                // User-friendly Error Message
-                alert("Connection Error!\n\nDetails: " + err.message + "\n\nTroubleshooting:\n1. Ensure Google Apps Script is deployed as 'Web App'.\n2. 'Execute as' should be 'Me'.\n3. 'Who has access' MUST be 'Anyone'.\n4. Check internet connection.");
+                console.error(err);
+                alert("Connection Error: " + err.message);
             }
         }
 
-        // --- Populate Modal Dropdowns ---
-        function populateModalDropdowns() {
-            const modules = new Set();
-            const priorities = new Set();
-            const reporters = new Set();
+        // --- ASSIGNMENT WIZARD LOGIC ---
 
-            allData.forEach(d => {
-                if(d.module) modules.add(d.module);
-                if(d.priority) priorities.add(d.priority);
-                if(d.reported) reporters.add(d.reported);
-            });
-
-            const modSelect = document.getElementById('modal-module');
-            modSelect.innerHTML = '<option value="">Select Module</option>';
-            modules.forEach(m => { modSelect.innerHTML += `<option value="${m}">${m}</option>`; });
-            if(modules.size === 0) { ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`); }
-
-            const priSelect = document.getElementById('modal-priority');
-            priSelect.innerHTML = '<option value="">Select Priority</option>';
-            priorities.forEach(p => { priSelect.innerHTML += `<option value="${p}">${p}</option>`; });
-            if(priorities.size === 0) { ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`); }
-
-            const repList = document.getElementById('reporters-list');
-            repList.innerHTML = '';
-            reporters.forEach(r => { repList.innerHTML += `<option value="${r}">`; });
+        function openAssignSelector() {
+            const reporters = new Set(allData.map(d => d.reported).filter(r => r));
+            const select = document.getElementById('assign-reporter-select');
+            select.innerHTML = '<option value="">Select a person...</option>';
+            reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`);
+            document.getElementById('assignSelectorModal').classList.remove('hidden');
         }
 
-        function calculateNextId() {
-            if (allData.length === 0) return 1001;
-            const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id));
-            const maxId = ids.length > 0 ? Math.max(...ids) : 1000;
-            return maxId + 1;
+        function closeAssignSelector() {
+            document.getElementById('assignSelectorModal').classList.add('hidden');
         }
 
-        function openModal() {
-            const modal = document.getElementById('issueModal');
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-            const nextId = calculateNextId();
-            document.getElementById('modal-id').value = nextId;
-            populateModalDropdowns();
-        }
+        function startAssignment() {
+            const reporter = document.getElementById('assign-reporter-select').value;
+            if(!reporter) { alert("Please select a reporter"); return; }
 
-        function closeModal() { 
-            document.getElementById('issueModal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        function updateFileName() {
-            const fileInput = document.getElementById('modal-file');
-            const display = document.getElementById('file-name-display');
-            if (fileInput.files.length > 0) {
-                display.innerText = fileInput.files[0].name;
-                display.classList.add('text-blue-600', 'font-semibold');
-            } else {
-                display.innerText = "No file chosen";
-                display.classList.remove('text-blue-600', 'font-semibold');
-            }
-        }
-
-        async function submitIssue(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const fileInput = document.getElementById('modal-file');
-            let finalLink = document.getElementById('modal-link').value;
+            // MODIFIED FILTER: Filter issues by reporter AND ensure Assign column is empty/Unassigned
+            assignableIssues = allData.filter(d => 
+                d.reported === reporter && 
+                (!d.assign || d.assign === "Unassigned" || d.assign.trim() === "")
+            );
             
+            if(assignableIssues.length === 0) {
+                alert("No pending/unassigned issues found for " + reporter);
+                return;
+            }
+
+            document.getElementById('assign-reporter-name').innerText = reporter;
+            currentAssignIndex = 0;
+            
+            // Populate Dropdowns inside Assign Modal
+            // No longer needed for static fields but still needed for Developer List
+            populateAssignDropdowns();
+
+            closeAssignSelector();
+            document.getElementById('assignModal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            
+            loadAssignIssue();
+        }
+
+        function populateAssignDropdowns() {
+            // Only Developers List is needed now
+            const developers = new Set(allData.map(d => d.assign).filter(a => a && a !== 'Unassigned' && a.trim() !== ''));
+            const devList = document.getElementById('developers-list');
+            devList.innerHTML = '';
+            developers.forEach(dev => devList.innerHTML += `<option value="${dev}">`);
+        }
+
+        function loadAssignIssue() {
+            if (currentAssignIndex >= assignableIssues.length) {
+                alert("All issues for this reporter have been reviewed!");
+                closeAssignModal();
+                return;
+            }
+
+            const issue = assignableIssues[currentAssignIndex];
+            
+            // Fill Form - Static Fields
+            document.getElementById('assign-id').value = issue.id;
+            document.getElementById('assign-date').value = issue.date;
+            document.getElementById('assign-module').value = issue.module || "Employer"; // Now an Input
+            document.getElementById('assign-priority').value = issue.priority || "Medium"; // Now an Input
+            
+            // Editable Fields
+            document.getElementById('assign-desc').value = issue.description;
+            document.getElementById('assign-dev').value = ""; // Clear dev field
+
+            document.getElementById('assign-row-index').value = issue.rowIndex; 
+
+            // Handle Link
+            const linkContainer = document.getElementById('assign-link-container');
+            if (issue.link) {
+                const isDrive = issue.link.includes('drive.google.com');
+                linkContainer.innerHTML = `<a href="${issue.link}" target="_blank" class="text-blue-600 flex items-center gap-1 font-semibold hover:underline">${isDrive ? '<i class="fa-brands fa-google-drive"></i> Open Drive File' : '<i class="fa-solid fa-link"></i> Open Link'}</a>`;
+            } else {
+                linkContainer.innerHTML = '<span class="text-gray-400 italic text-sm">No attachment</span>';
+            }
+        }
+
+        async function submitAssignment(e) {
+            e.preventDefault();
+            const btn = document.getElementById('assign-submit-btn');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                action: "update",
+                rowIndex: document.getElementById('assign-row-index').value,
+                id: document.getElementById('assign-id').value,
+                module: document.getElementById('assign-module').value, // Will send static value
+                priority: document.getElementById('assign-priority').value, // Will send static value
+                description: document.getElementById('assign-desc').value, // Editable
+                assignee: document.getElementById('assign-dev').value // Editable
+            };
 
             try {
-                if (fileInput.files.length > 0) {
-                    document.getElementById('upload-status-text').innerText = "Authorizing...";
-                    document.getElementById('upload-status-text').classList.remove('hidden');
-                    
-                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken", { redirect: "follow" });
-                    
-                    if (!tokenRes.ok) {
-                       throw new Error("Failed to get token from Script.");
-                    }
-
-                    const tokenData = await tokenRes.json();
-                    
-                    if(!tokenData || !tokenData.token) {
-                        console.error("Token Response Error:", tokenData);
-                        throw new Error("Could not retrieve Access Token from Script. Check 'doGet' in Code.gs.");
-                    }
-                    const accessToken = tokenData.token;
-
-                    const file = fileInput.files[0];
-                    document.getElementById('upload-progress-container').classList.remove('hidden');
-                    
-                    const metadata = { name: file.name, mimeType: file.type, parents: [DRIVE_FOLDER_ID] };
-                    
-                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-                        body: JSON.stringify(metadata)
-                    });
-
-                    // ERROR TRAP HERE: If 403, scope issue. If 404, folder ID issue.
-                    if(!initRes.ok) {
-                        const errText = await initRes.text();
-                        console.error("Drive Init Failed:", initRes.status, errText);
-                        
-                        let errorMsg = `Upload Init Failed (${initRes.status})`;
-                        try {
-                            const errJson = JSON.parse(errText);
-                            if (errJson.error && errJson.error.message) {
-                                errorMsg += ": " + errJson.error.message;
-                            }
-                        } catch(e) {}
-
-                        if(initRes.status === 403) {
-                             if (!errorMsg.includes("Google Drive API")) {
-                                 errorMsg = "Permission Denied (403). 1. Enable Drive API in GCP Console. 2. Update appsscript.json.";
-                             }
-                        } else if(initRes.status === 404) {
-                            errorMsg = "Folder Not Found (404). Check DRIVE_FOLDER_ID.";
-                        }
-                        
-                        throw new Error(errorMsg);
-                    }
-                    
-                    const locationUrl = initRes.headers.get('Location');
-
-                    const uploadedFile = await new Promise((resolve, reject) => {
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('PUT', locationUrl, true);
-                        xhr.upload.onprogress = (e) => {
-                            if (e.lengthComputable) {
-                                const percent = Math.round((e.loaded / e.total) * 100);
-                                document.getElementById('upload-progress-bar').style.width = percent + "%";
-                                document.getElementById('upload-status-text').innerText = `Uploading: ${percent}%`;
-                            }
-                        };
-                        xhr.onload = () => {
-                            if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText));
-                            else reject("Upload Failed: " + xhr.statusText);
-                        };
-                        xhr.onerror = () => reject("Network Error during upload");
-                        xhr.send(file);
-                    });
-                    finalLink = `https://drive.google.com/file/d/${uploadedFile.id}/view`;
-                }
-
-                document.getElementById('upload-status-text').innerText = "Saving to Sheet...";
-                
-                const formData = {
-                    action: "submit",
-                    module: document.getElementById('modal-module').value,
-                    priority: document.getElementById('modal-priority').value,
-                    reported: document.getElementById('modal-reporter').value,
-                    description: document.getElementById('modal-desc').value,
-                    link: finalLink
-                };
-
                 const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(formData),
-                    // No redirect: follow here because POST requests in GAS are tricky with redirects, but usually default is fine.
+                    body: JSON.stringify(payload)
                 });
                 
-                if (!res.ok) {
-                    throw new Error("Failed to submit to sheet. Status: " + res.status);
-                }
-
                 const result = await res.json();
                 if(result.status === 'success') {
-                    alert("Success! Issue #" + result.id + " Created.");
-                    closeModal();
-                    document.getElementById('issueForm').reset();
-                    document.getElementById('upload-progress-container').classList.add('hidden');
-                    document.getElementById('upload-status-text').classList.add('hidden');
-                    document.getElementById('file-name-display').innerText = "No file chosen";
-                    fetchData(); 
+                    // Update Local Data to reflect changes immediately
+                    const target = assignableIssues[currentAssignIndex];
+                    // Module/Priority won't change but Description and Assignee will
+                    target.description = payload.description;
+                    target.assign = payload.assignee;
+                    
+                    // Move to next
+                    currentAssignIndex++;
+                    loadAssignIssue();
                 } else {
-                    throw new Error("Sheet Save Failed: " + (result.message || "Unknown error"));
+                    throw new Error(result.message);
                 }
-
             } catch (err) {
-                alert("Error: " + err.message);
-                console.error(err);
+                alert("Update Failed: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<span>Submit Issue</span> <i class="fa-solid fa-paper-plane text-xs"></i>`;
+                btn.innerText = "Assign & Save";
             }
         }
 
-        // --- Standard UI Functions ---
-        function updateDashboard() {
-            let counts = { Total: allData.length, Pending: 0, Done: 0, Other: 0 };
-            allData.forEach(d => {
-                const s = (d.status || "").toLowerCase();
-                if(s === 'pending') counts.Pending++;
-                else if(s === 'done') counts.Done++;
-                else counts.Other++;
-            });
-            document.getElementById('count-total').innerText = counts.Total;
-            document.getElementById('count-pending').innerText = counts.Pending;
-            document.getElementById('count-done').innerText = counts.Done;
-            document.getElementById('count-other').innerText = counts.Other;
-            
-            applyFilters();
+        function skipAssignment() {
+            currentAssignIndex++;
+            loadAssignIssue();
         }
 
-        function renderCharts() {
-            const pCounts = {}; const aCounts = {};
-            filteredData.forEach(d => {
-                pCounts[d.priority || "Unknown"] = (pCounts[d.priority || "Unknown"] || 0) + 1;
-                aCounts[d.assign || "Unassigned"] = (aCounts[d.assign || "Unassigned"] || 0) + 1;
-            });
-            const priorityParent = document.getElementById('priorityChart').parentNode;
-            const assigneeParent = document.getElementById('assigneeChart').parentNode;
-            priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
-            assigneeParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
-
-            new Chart(document.getElementById('priorityChart'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#7c3aed'] }] },
-                options: { 
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 800,
-                        easing: 'easeOutQuart'
-                    }
-                }
-            });
-            new Chart(document.getElementById('assigneeChart'), {
-                type: 'bar',
-                data: { labels: Object.keys(aCounts), datasets: [{ label: 'Tasks', data: Object.values(aCounts), backgroundColor: '#3b82f6' }] },
-                options: { 
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 800,
-                        easing: 'easeOutQuart'
-                    }
-                }
-            });
+        function closeAssignModal() {
+            document.getElementById('assignModal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            renderTable();
+            renderCharts();
         }
 
+        // --- Standard Logic (Same as before) ---
         function populateFilters() {
             const modules = new Set(allData.map(d => d.module));
-            const priorities = new Set(allData.map(d => d.priority)); 
+            const priorities = new Set(allData.map(d => d.priority));
             const reported = new Set(allData.map(d => d.reported));
             const assignees = new Set(allData.map(d => d.assign));
             
@@ -506,6 +474,19 @@
             fillSelect('filter-priority', priorities);
             fillSelect('filter-reported', reported);
             fillSelect('filter-assignee', assignees);
+            
+            // Populate Report Modal Dropdowns
+            const modSelect = document.getElementById('modal-module');
+            modSelect.innerHTML = '<option value="">Select Module</option>';
+            ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
+            
+            const priSelect = document.getElementById('modal-priority');
+            priSelect.innerHTML = '<option value="">Select Priority</option>';
+            ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
+
+            const repList = document.getElementById('reporters-list');
+            repList.innerHTML = '';
+            reported.forEach(r => { if(r) repList.innerHTML += `<option value="${r}">`; });
         }
 
         function fillSelect(id, set) {
@@ -537,10 +518,30 @@
             });
             currentPage = 1;
             renderTable();
-            renderCharts(); 
+            renderCharts();
         }
 
         function filterByStatus(status) { currentStatusFilter = status; applyFilters(); }
+
+        function renderCharts() {
+            const pCounts = {}; const aCounts = {};
+            filteredData.forEach(d => {
+                pCounts[d.priority || "Unknown"] = (pCounts[d.priority || "Unknown"] || 0) + 1;
+                aCounts[d.assign || "Unassigned"] = (aCounts[d.assign || "Unassigned"] || 0) + 1;
+            });
+            // Chart Logic (Same as before)
+            const priorityParent = document.getElementById('priorityChart').parentNode;
+            priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
+            new Chart(document.getElementById('priorityChart'), {
+                type: 'doughnut', data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#7c3aed'] }] }, options: { maintainAspectRatio: false, animation: { duration: 800 } }
+            });
+            
+            const assignParent = document.getElementById('assigneeChart').parentNode;
+            assignParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
+            new Chart(document.getElementById('assigneeChart'), {
+                type: 'bar', data: { labels: Object.keys(aCounts), datasets: [{ label: 'Tasks', data: Object.values(aCounts), backgroundColor: '#3b82f6' }] }, options: { maintainAspectRatio: false, animation: { duration: 800 } }
+            });
+        }
 
         function renderTable() {
             const tbody = document.getElementById('table-body');
@@ -587,6 +588,79 @@
                 `;
                 tbody.innerHTML += tr;
             });
+        }
+
+        // Functions for Report Issue Modal (Same as before)
+        function calculateNextId() {
+            if (allData.length === 0) return 1001;
+            const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id));
+            const maxId = ids.length > 0 ? Math.max(...ids) : 1000;
+            return maxId + 1;
+        }
+        function openModal() {
+            const modal = document.getElementById('issueModal');
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            document.getElementById('modal-id').value = calculateNextId();
+        }
+        function closeModal() {
+            document.getElementById('issueModal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+        function updateFileName() {
+            const fileInput = document.getElementById('modal-file');
+            const display = document.getElementById('file-name-display');
+            if (fileInput.files.length > 0) { display.innerText = fileInput.files[0].name; display.classList.add('text-blue-600', 'font-semibold'); } 
+            else { display.innerText = "No file chosen"; display.classList.remove('text-blue-600', 'font-semibold'); }
+        }
+        async function submitIssue(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const fileInput = document.getElementById('modal-file');
+            let finalLink = document.getElementById('modal-link').value;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            try {
+                if (fileInput.files.length > 0) {
+                    document.getElementById('upload-status-text').innerText = "Authorizing...";
+                    document.getElementById('upload-status-text').classList.remove('hidden');
+                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken");
+                    const tokenData = await tokenRes.json();
+                    if(!tokenData.token) throw new Error("Token Error");
+                    const file = fileInput.files[0];
+                    document.getElementById('upload-progress-container').classList.remove('hidden');
+                    const metadata = { name: file.name, mimeType: file.type, parents: [DRIVE_FOLDER_ID] };
+                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+                        method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json' }, body: JSON.stringify(metadata)
+                    });
+                    if(!initRes.ok) throw new Error("Upload Init Failed");
+                    const locationUrl = initRes.headers.get('Location');
+                    const uploadedFile = await new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest(); xhr.open('PUT', locationUrl, true);
+                        xhr.upload.onprogress = (e) => { if (e.lengthComputable) { const percent = Math.round((e.loaded / e.total) * 100); document.getElementById('upload-progress-bar').style.width = percent + "%"; document.getElementById('upload-status-text').innerText = `Uploading: ${percent}%`; } };
+                        xhr.onload = () => { if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText)); else reject("Upload Failed"); };
+                        xhr.onerror = () => reject("Network Error"); xhr.send(file);
+                    });
+                    finalLink = `https://drive.google.com/file/d/${uploadedFile.id}/view`;
+                }
+                document.getElementById('upload-status-text').innerText = "Saving to Sheet...";
+                const formData = {
+                    action: "submit", module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value,
+                    reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink
+                };
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) });
+                const result = await res.json();
+                if(result.status === 'success') { alert("Success! Issue #" + result.id + " Created."); closeModal(); document.getElementById('issueForm').reset(); fetchData(); } 
+                else { throw new Error("Sheet Save Failed"); }
+            } catch (err) { alert("Error: " + err.message); } finally { btn.disabled = false; btn.innerText = "Submit Issue"; }
+        }
+        function updateDashboard() {
+            let counts = { Total: allData.length, Pending: 0, Done: 0, Other: 0 };
+            allData.forEach(d => {
+                const s = (d.status || "").toLowerCase();
+                if(s === 'pending') counts.Pending++; else if(s === 'done') counts.Done++; else counts.Other++;
+            });
+            document.getElementById('count-total').innerText = counts.Total; document.getElementById('count-pending').innerText = counts.Pending; document.getElementById('count-done').innerText = counts.Done; document.getElementById('count-other').innerText = counts.Other;
+            applyFilters();
         }
     </script>
 </body>

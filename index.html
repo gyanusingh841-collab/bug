@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TalentWale Bugs Report</title>
+    <title>Bug Tracker Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -274,7 +274,6 @@
     </div>
 
     <script>
-        // NEW URL UPDATE HERE:
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyClh6YxCydhuZs9qSPHBvzzvP_tyiwOJW_Fr_EXwpOvaqpbNdJ3IpdSWVintDVIF8U/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
@@ -322,7 +321,7 @@
             }
         }
 
-        // --- STATUS UPDATE FUNCTION ---
+        // --- UPDATED: SEND NOTIFICATION TYPE ---
         async function updateStatus(id, rowIndex, newStatus) {
             const selectElem = document.querySelector(`select[data-id="${id}"]`);
             if(selectElem) {
@@ -334,6 +333,7 @@
             
             const payload = {
                 action: "update",
+                notificationType: "status", // Explicitly say this is a STATUS update
                 rowIndex: rowIndex,
                 id: id,
                 status: newStatus,
@@ -368,7 +368,6 @@
             }
         }
 
-        // --- RENDER TABLE ---
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -451,6 +450,7 @@
             });
         }
 
+        // --- Other Functions (Standard) ---
         function updateDashboard() {
             let counts = { Total: allData.length, Pending: 0, Done: 0, Other: 0 };
             
@@ -489,7 +489,6 @@
                 options: { maintainAspectRatio: false, animation: { duration: 800, easing: 'easeOutQuart' } }
             });
             
-            // SORT ASSIGNEES (High to Low)
             const sortedAssignees = Object.entries(aCounts).sort((a, b) => b[1] - a[1]);
             const labelsSorted = sortedAssignees.map(item => item[0]);
             const dataSorted = sortedAssignees.map(item => item[1]);
@@ -585,7 +584,8 @@
         }
         async function submitAssignment(e) {
             e.preventDefault(); const btn = document.getElementById('assign-submit-btn'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-            const payload = { action: "update", rowIndex: document.getElementById('assign-row-index').value, id: document.getElementById('assign-id').value, module: document.getElementById('assign-module').value, priority: document.getElementById('assign-priority').value, description: document.getElementById('assign-desc').value, assignee: document.getElementById('assign-dev').value };
+            // UPDATED: ADDED notificationType: "assign"
+            const payload = { action: "update", notificationType: "assign", rowIndex: document.getElementById('assign-row-index').value, id: document.getElementById('assign-id').value, module: document.getElementById('assign-module').value, priority: document.getElementById('assign-priority').value, description: document.getElementById('assign-desc').value, assignee: document.getElementById('assign-dev').value };
             try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await res.json(); if(result.status === 'success') { const target = assignableIssues[currentAssignIndex]; target.description = payload.description; target.assign = payload.assignee; currentAssignIndex++; loadAssignIssue(); } else { throw new Error(result.message); } } catch (err) { alert("Update Failed: " + err.message); } finally { btn.disabled = false; btn.innerText = "Assign & Save"; }
         }
         function skipAssignment() { currentAssignIndex++; loadAssignIssue(); }

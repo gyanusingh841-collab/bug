@@ -21,99 +21,110 @@
 </head>
 <body class="text-gray-800">
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md fixed w-full z-10 top-0 left-0">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-            <div class="flex items-center">
-                <i class="fa-solid fa-bug text-red-600 text-2xl mr-3"></i>
-                <h1 class="text-xl font-bold">Bug Tracker Pro <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="openAssignSelector()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
-                    <i class="fa-solid fa-user-check"></i> Assign Issue
-                </button>
-                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
-                    <i class="fa-solid fa-plus"></i> Report Issue
-                </button>
+    <!-- Navbar (Fixed & Stacked on Mobile) -->
+    <nav class="bg-white shadow-md fixed w-full z-50 top-0 left-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center py-3 sm:h-16 space-y-3 sm:space-y-0">
+                <!-- Logo Section -->
+                <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-bug text-red-600 text-xl sm:text-2xl mr-2"></i>
+                        <h1 class="text-lg sm:text-xl font-bold whitespace-nowrap">Bug Tracker Pro</h1>
+                    </div>
+                    <!-- Connection Status -->
+                    <span class="ml-auto sm:ml-3 text-[10px] sm:text-xs font-normal text-green-600 border border-green-200 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap" id="connection-status">Connecting...</span>
+                </div>
+
+                <!-- Buttons Section -->
+                <div class="flex w-full sm:w-auto justify-center space-x-2 sm:space-x-3">
+                    <button onclick="openAssignSelector()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shadow-md transition transform active:scale-95 whitespace-nowrap">
+                        <i class="fa-solid fa-user-check"></i> <span>Assign</span>
+                    </button>
+                    <button onclick="openModal()" class="flex-1 sm:flex-none justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shadow-md transition transform active:scale-95 whitespace-nowrap">
+                        <i class="fa-solid fa-plus"></i> <span>Report</span>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 pt-24 pb-10">
+    <!-- Increased top padding for mobile to prevent overlap with stacked header -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[140px] sm:pt-24 pb-10">
+        
         <div id="loader" class="flex justify-center items-center py-20">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
         </div>
 
         <div id="dashboard-content" class="hidden">
             <!-- Header Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div onclick="filterByStatus('Total')" class="bg-white p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-gray-500 hover:bg-gray-50 transition transform hover:-translate-y-1">
-                    <p class="text-sm text-gray-500 font-bold">TOTAL BUGS</p>
-                    <h2 class="text-3xl font-bold" id="count-total">0</h2>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div onclick="filterByStatus('Total')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-gray-500 hover:bg-gray-50 transition transform hover:-translate-y-1">
+                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">TOTAL BUGS</p>
+                    <h2 class="text-xl sm:text-3xl font-bold mt-1" id="count-total">0</h2>
                 </div>
-                <div onclick="filterByStatus('Pending')" class="bg-white p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-yellow-500 hover:bg-yellow-50 transition transform hover:-translate-y-1">
-                    <p class="text-sm text-gray-500 font-bold">PENDING</p>
-                    <h2 class="text-3xl font-bold text-yellow-600" id="count-pending">0</h2>
+                <div onclick="filterByStatus('Pending')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-yellow-500 hover:bg-yellow-50 transition transform hover:-translate-y-1">
+                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">PENDING</p>
+                    <h2 class="text-xl sm:text-3xl font-bold text-yellow-600 mt-1" id="count-pending">0</h2>
                 </div>
-                <div onclick="filterByStatus('Done')" class="bg-white p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-green-500 hover:bg-green-50 transition transform hover:-translate-y-1">
-                    <p class="text-sm text-gray-500 font-bold">DONE</p>
-                    <h2 class="text-3xl font-bold text-green-600" id="count-done">0</h2>
+                <div onclick="filterByStatus('Done')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-green-500 hover:bg-green-50 transition transform hover:-translate-y-1">
+                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">DONE</p>
+                    <h2 class="text-xl sm:text-3xl font-bold text-green-600 mt-1" id="count-done">0</h2>
                 </div>
-                <div onclick="filterByStatus('Other')" class="bg-white p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-purple-500 hover:bg-purple-50 transition transform hover:-translate-y-1">
-                    <p class="text-sm text-gray-500 font-bold">OTHER</p>
-                    <h2 class="text-3xl font-bold text-purple-600" id="count-other">0</h2>
+                <div onclick="filterByStatus('Other')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-purple-500 hover:bg-purple-50 transition transform hover:-translate-y-1">
+                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">OTHER</p>
+                    <h2 class="text-xl sm:text-3xl font-bold text-purple-600 mt-1" id="count-other">0</h2>
                 </div>
             </div>
 
             <!-- Charts -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg card-shadow">
-                    <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div class="bg-white p-4 sm:p-6 rounded-lg card-shadow">
+                    <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center text-sm sm:text-base">
                         <span>Priority Distribution</span>
-                        <span class="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Filtered Data</span>
+                        <span class="text-[10px] sm:text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Filtered Data</span>
                     </h3>
-                    <div class="h-64"><canvas id="priorityChart"></canvas></div>
+                    <div class="h-48 sm:h-64"><canvas id="priorityChart"></canvas></div>
                 </div>
-                <div class="bg-white p-6 rounded-lg card-shadow">
-                    <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center">
+                <div class="bg-white p-4 sm:p-6 rounded-lg card-shadow">
+                    <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center text-sm sm:text-base">
                         <span>Assignee Workload</span>
-                        <span class="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Sorted (High to Low)</span>
+                        <span class="text-[10px] sm:text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Sorted (High to Low)</span>
                     </h3>
-                    <div class="h-64"><canvas id="assigneeChart"></canvas></div>
+                    <div class="h-48 sm:h-64"><canvas id="assigneeChart"></canvas></div>
                 </div>
             </div>
 
             <!-- Filter Header & Search Section -->
-            <div class="bg-white p-5 rounded-lg card-shadow mb-6">
+            <div class="bg-white p-4 sm:p-5 rounded-lg card-shadow mb-6">
                 <div class="flex items-center gap-2 mb-4 border-b pb-2">
                     <i class="fa-solid fa-filter text-indigo-600"></i>
-                    <h3 class="text-lg font-bold text-gray-800">Advanced Filters & Search</h3>
+                    <h3 class="text-sm sm:text-lg font-bold text-gray-800">Advanced Filters & Search</h3>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 sm:gap-4">
                     <div class="md:col-span-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Search</label>
+                        <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Search</label>
                         <div class="relative">
                             <input type="text" id="global-search" placeholder="Search..." class="w-full border border-gray-300 rounded-lg p-2 pl-8 text-sm focus:ring-2 focus:ring-indigo-500">
                             <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i></div>
                         </div>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Module</label><select id="filter-module" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Modules</option></select></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Priority</label><select id="filter-priority" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Priorities</option></select></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Reported By</label><select id="filter-reported" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Reporters</option></select></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label><select id="filter-assignee" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Assignees</option></select></div>
+                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Module</label><select id="filter-module" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Modules</option></select></div>
+                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Priority</label><select id="filter-priority" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Priorities</option></select></div>
+                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Reported By</label><select id="filter-reported" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Reporters</option></select></div>
+                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label><select id="filter-assignee" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Assignees</option></select></div>
                 </div>
             </div>
 
             <!-- Table -->
             <div class="bg-white rounded-lg card-shadow overflow-hidden">
-                <div class="p-4 border-b flex justify-between bg-gray-50 items-center">
-                    <h3 class="font-bold text-gray-700">Issue Details</h3>
-                    <select id="rows-per-page" class="border rounded p-1 text-sm bg-white"><option value="10">10</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select>
+                <div class="p-3 sm:p-4 border-b flex justify-between bg-gray-50 items-center">
+                    <h3 class="font-bold text-gray-700 text-sm sm:text-base">Issue Details</h3>
+                    <select id="rows-per-page" class="border rounded p-1 text-xs sm:text-sm bg-white"><option value="10">10</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-100 uppercase text-xs text-gray-600 sticky top-0">
+                        <thead class="bg-gray-100 uppercase text-[10px] sm:text-xs text-gray-600 sticky top-0">
                             <tr>
                                 <th class="p-3 border-b w-[5%]">ID</th>
                                 <th class="p-3 border-b w-[10%]">Module</th>
@@ -125,14 +136,14 @@
                                 <th class="p-3 border-b w-[15%]">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="table-body" class="divide-y divide-gray-100"></tbody>
+                        <tbody id="table-body" class="divide-y divide-gray-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
-                <div class="p-4 border-t flex justify-between bg-gray-50">
-                    <span id="pagination-info" class="text-sm text-gray-600">Showing 0-0</span>
+                <div class="p-3 sm:p-4 border-t flex justify-between bg-gray-50 items-center">
+                    <span id="pagination-info" class="text-[10px] sm:text-sm text-gray-600">Showing 0-0</span>
                     <div class="flex gap-2">
-                        <button id="prev-btn" class="px-3 py-1 border rounded bg-white hover:bg-gray-100 disabled:opacity-50">Prev</button>
-                        <button id="next-btn" class="px-3 py-1 border rounded bg-white hover:bg-gray-100 disabled:opacity-50">Next</button>
+                        <button id="prev-btn" class="px-3 py-1 border rounded bg-white hover:bg-gray-100 disabled:opacity-50 text-xs sm:text-sm">Prev</button>
+                        <button id="next-btn" class="px-3 py-1 border rounded bg-white hover:bg-gray-100 disabled:opacity-50 text-xs sm:text-sm">Next</button>
                     </div>
                 </div>
             </div>
@@ -140,141 +151,144 @@
     </div>
 
     <!-- MODAL 1: REPORT ISSUE -->
-    <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0">
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20">
-                <h3 class="text-xl font-bold text-gray-800">Report New Issue</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        <div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-4 sm:p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll">
+            <div class="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b sticky top-0 bg-white z-20">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Report New Issue</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl sm:text-2xl"></i></button>
             </div>
             <form id="issueForm" onsubmit="submitIssue(event)" class="space-y-3">
                 <div class="mb-2">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue ID (Next)</label>
-                    <input type="text" id="modal-id" readonly class="w-full bg-blue-50 border border-blue-200 text-blue-800 font-bold p-2 rounded-lg text-center cursor-not-allowed">
+                    <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Issue ID (Next)</label>
+                    <input type="text" id="modal-id" readonly class="w-full bg-blue-50 border border-blue-200 text-blue-800 font-bold p-2 rounded-lg text-center cursor-not-allowed text-sm">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Module <span class="text-red-500">*</span></label>
-                        <select id="modal-module" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500"><option value="">Select Module</option></select>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Module <span class="text-red-500">*</span></label>
+                        <select id="modal-module" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"><option value="">Select Module</option></select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Priority <span class="text-red-500">*</span></label>
-                        <select id="modal-priority" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500"><option value="">Select Priority</option></select>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Priority <span class="text-red-500">*</span></label>
+                        <select id="modal-priority" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"><option value="">Select Priority</option></select>
                     </div>
                 </div>
+                
+                <!-- CHANGED: No Input List, Only Dropdown -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Reported By <span class="text-red-500">*</span></label>
-                    <input list="reporters-list" id="modal-reporter" required placeholder="Select or type name..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <datalist id="reporters-list"></datalist>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Reported By <span class="text-red-500">*</span></label>
+                    <select id="modal-reporter" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        <option value="">Select Reporter</option>
+                    </select>
                 </div>
+                
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-                    <textarea id="modal-desc" required placeholder="Describe the issue..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 h-20 resize-none"></textarea>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
+                    <textarea id="modal-desc" required placeholder="Describe the issue..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 h-20 resize-none text-sm"></textarea>
                 </div>
                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Evidence / Attachment</label>
+                    <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">Evidence / Attachment</label>
                     <div class="flex flex-col gap-2">
-                        <input type="url" id="modal-link" placeholder="Paste external link (Optional)" class="w-full border border-gray-300 p-2 rounded text-sm">
+                        <input type="url" id="modal-link" placeholder="Paste external link (Optional)" class="w-full border border-gray-300 p-2 rounded text-xs sm:text-sm">
                         <div class="flex items-center gap-3">
-                            <span class="text-xs font-bold text-gray-500 uppercase">OR Upload</span>
-                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded shadow-sm text-sm flex items-center gap-2">
+                            <span class="text-[10px] sm:text-xs font-bold text-gray-500 uppercase">OR Upload</span>
+                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded shadow-sm text-xs sm:text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-cloud-arrow-up text-blue-500"></i> Choose File
                                 <input type="file" id="modal-file" class="hidden" onchange="updateFileName()">
                             </label>
-                            <span id="file-name-display" class="text-xs text-gray-500 italic truncate max-w-[150px]">No file chosen</span>
+                            <span id="file-name-display" class="text-[10px] sm:text-xs text-gray-500 italic truncate max-w-[200px]">No file chosen</span>
                         </div>
                         <div id="upload-progress-container" class="hidden w-full bg-gray-200 rounded-full h-2 mt-1">
                             <div id="upload-progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                         </div>
-                        <p id="upload-status-text" class="text-xs text-green-600 font-semibold hidden text-center">Starting upload...</p>
+                        <p id="upload-status-text" class="text-[10px] sm:text-xs text-green-600 font-semibold hidden text-center">Starting upload...</p>
                     </div>
                 </div>
                 <div class="flex justify-end gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-sm">Cancel</button>
-                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md font-medium text-sm">Submit Issue</button>
+                    <button type="button" onclick="closeModal()" class="px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-xs sm:text-sm">Cancel</button>
+                    <button type="submit" id="submit-btn" class="px-4 sm:px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md font-medium text-xs sm:text-sm">Submit Issue</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 2: ASSIGN SELECTOR -->
-    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- MODAL 2: ASSIGN SELECTOR (Responsive) -->
+    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0">
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeAssignSelector()"></div>
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative z-10 transform transition-all scale-100 mx-4">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Who reported the issues?</h3>
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-5 sm:p-6 relative z-10 transform transition-all scale-100 mx-4">
+            <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">Who reported the issues?</h3>
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Select Reporter</label>
-                <select id="assign-reporter-select" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Select Reporter</label>
+                <select id="assign-reporter-select" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
                     <option value="">Select a person...</option>
                 </select>
             </div>
             <div class="flex justify-end gap-2">
-                <button onclick="closeAssignSelector()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
-                <button onclick="startAssignment()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Start Assigning</button>
+                <button onclick="closeAssignSelector()" class="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 rounded text-xs sm:text-sm">Cancel</button>
+                <button onclick="startAssignment()" class="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs sm:text-sm">Start Assigning</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 3: ASSIGN ISSUE (WIZARD) -->
-    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- MODAL 3: ASSIGN ISSUE (WIZARD - Responsive) -->
+    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0">
         <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20">
+        <div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-4 sm:p-5 relative z-10 transform transition-all scale-100 border border-gray-200 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll">
+            <div class="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b sticky top-0 bg-white z-20">
                 <div>
-                    <h3 class="text-xl font-bold text-gray-800">Assign Issues</h3>
-                    <p class="text-xs text-gray-500">Reviewing issues reported by: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800">Assign Issues</h3>
+                    <p class="text-[10px] sm:text-xs text-gray-500">Reviewing issues by: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p>
                 </div>
-                <button onclick="closeAssignModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                <button onclick="closeAssignModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl sm:text-2xl"></i></button>
             </div>
             <div id="assign-loading" class="hidden text-center py-10">
-                <i class="fa-solid fa-spinner fa-spin text-3xl text-indigo-500"></i>
-                <p class="mt-2 text-gray-500">Updating...</p>
+                <i class="fa-solid fa-spinner fa-spin text-2xl sm:text-3xl text-indigo-500"></i>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500">Updating...</p>
             </div>
             <form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-3">
                 <input type="hidden" id="assign-row-index"> 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue ID</label>
-                        <input type="text" id="assign-id" readonly class="w-full bg-gray-100 border border-gray-300 font-bold p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                        <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Issue ID</label>
+                        <input type="text" id="assign-id" readonly class="w-full bg-gray-100 border border-gray-300 font-bold p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date</label>
-                        <input type="text" id="assign-date" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                        <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Date</label>
+                        <input type="text" id="assign-date" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Module</label>
-                        <input type="text" id="assign-module" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Module</label>
+                        <input type="text" id="assign-module" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Priority</label>
-                        <input type="text" id="assign-priority" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 cursor-not-allowed">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Priority</label>
+                        <input type="text" id="assign-priority" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Description (Editable)</label>
-                    <textarea id="assign-desc" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 h-20 resize-none bg-white"></textarea>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Description (Editable)</label>
+                    <textarea id="assign-desc" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 h-20 resize-none bg-white text-sm"></textarea>
                 </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
-                    <span class="text-sm font-bold text-gray-700">Attachment:</span>
-                    <div id="assign-link-container"><span class="text-gray-400 italic text-sm">No attachment</span></div>
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                    <span class="text-xs sm:text-sm font-bold text-gray-700">Attachment:</span>
+                    <div id="assign-link-container"><span class="text-gray-400 italic text-xs sm:text-sm">No attachment</span></div>
                 </div>
                 <div class="border-t pt-3 mt-3">
-                    <label class="block text-sm font-bold text-indigo-700 mb-1">Assign To Developer <span class="text-red-500">*</span></label>
-                    <input list="developers-list" id="assign-dev" required placeholder="Select Developer..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
+                    <label class="block text-xs sm:text-sm font-bold text-indigo-700 mb-1">Assign To Developer <span class="text-red-500">*</span></label>
+                    <input list="developers-list" id="assign-dev" required placeholder="Select Developer..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white text-sm">
                     <datalist id="developers-list"></datalist>
                 </div>
                 <div class="flex justify-between gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
-                    <button type="button" onclick="skipAssignment()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm">Skip / Next</button>
-                    <button type="submit" id="assign-submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md font-medium text-sm">Assign & Save</button>
+                    <button type="button" onclick="skipAssignment()" class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-xs sm:text-sm">Skip / Next</button>
+                    <button type="submit" id="assign-submit-btn" class="px-4 sm:px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md font-medium text-xs sm:text-sm">Assign & Save</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // NEW URL UPDATE HERE:
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEh3NbEnMXcFJUnhcfPPPP7_KURFIVVevfvuOG5zJO47JPssDtya7w1tBqySI2d0nnKQ/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
@@ -312,7 +326,7 @@
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('dashboard-content').classList.remove('hidden');
                 document.getElementById('connection-status').innerText = "Connected";
-                document.getElementById('connection-status').className = "text-xs font-normal text-green-700 ml-2 border border-green-200 bg-green-100 px-2 py-1 rounded-full";
+                document.getElementById('connection-status').className = "ml-auto sm:ml-3 text-[10px] sm:text-xs font-normal text-green-600 border border-green-200 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap";
                 
                 populateFilters(); 
                 updateDashboard();
@@ -322,7 +336,6 @@
             }
         }
 
-        // --- UPDATED: SEND NOTIFICATION TYPE ---
         async function updateStatus(id, rowIndex, newStatus) {
             const selectElem = document.querySelector(`select[data-id="${id}"]`);
             if(selectElem) {
@@ -334,7 +347,7 @@
             
             const payload = {
                 action: "update",
-                notificationType: "status", // Explicitly say this is a STATUS update
+                notificationType: "status", 
                 rowIndex: rowIndex,
                 id: id,
                 status: newStatus,
@@ -382,21 +395,21 @@
             const statusOptions = Array.from(uniqueStatuses).sort();
 
             pageData.forEach(row => {
-                let linkHtml = '<span class="text-gray-300 text-xs italic">No Attach</span>';
+                let linkHtml = '<span class="text-gray-300 text-[10px] italic">No Attach</span>';
                 if(row.link) {
                     const isDrive = row.link.includes('drive.google.com');
                     if(isDrive) {
                         linkHtml = `
                         <a href="${row.link}" target="_blank" title="Open Drive File" 
-                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow hover:bg-gray-50 transition text-[11px] font-semibold text-gray-700 group">
-                            <i class="fa-brands fa-google-drive text-green-600 text-sm"></i>
+                           class="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow hover:bg-gray-50 transition text-[10px] font-semibold text-gray-700 group whitespace-nowrap">
+                            <i class="fa-brands fa-google-drive text-green-600 text-xs"></i>
                             <span class="group-hover:text-green-700">View</span>
                         </a>`;
                     } else {
                         linkHtml = `
                         <a href="${row.link}" target="_blank" title="Open External Link"
-                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-50 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-200 transition text-[11px] font-semibold text-blue-600 group">
-                            <i class="fa-solid fa-link text-xs"></i>
+                           class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-50 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-200 transition text-[10px] font-semibold text-blue-600 group whitespace-nowrap">
+                            <i class="fa-solid fa-link text-[10px]"></i>
                             <span class="group-hover:underline">View</span>
                         </a>`;
                     }
@@ -407,7 +420,7 @@
                 else if(row.priority === 'Medium') pColor = 'bg-yellow-50 text-yellow-700 border border-yellow-100';
                 else if(row.priority === 'Low') pColor = 'bg-green-50 text-green-700 border border-green-100';
                 
-                let statusSelectHtml = `<select data-id="${row.id}" onchange="updateStatus('${row.id}', '${row.rowIndex}', this.value)" class="bg-transparent text-xs font-bold uppercase cursor-pointer border-none focus:ring-0 p-0 pr-4 w-auto max-w-[100px] truncate">`;
+                let statusSelectHtml = `<select data-id="${row.id}" onchange="updateStatus('${row.id}', '${row.rowIndex}', this.value)" class="bg-transparent text-[10px] sm:text-xs font-bold uppercase cursor-pointer border-none focus:ring-0 p-0 pr-4 w-auto max-w-[90px] truncate">`;
                 
                 if (!row.status || row.status.trim() === "") {
                     statusSelectHtml += `<option value="" selected class="text-gray-400 italic">--</option>`;
@@ -427,21 +440,21 @@
 
                 const tr = `
                     <tr class="border-b hover:bg-gray-50 transition duration-150">
-                        <td class="p-3 font-mono font-bold text-gray-500 text-xs">#${row.id}</td>
-                        <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded text-xs font-semibold">${row.module}</span></td>
-                        <td class="p-3 text-xs text-gray-500">${row.date}</td>
-                        <td class="p-3 text-gray-700 text-sm leading-snug w-1/3 min-w-[250px]">${row.description}</td>
-                        <td class="p-3">${linkHtml}</td>
-                        <td class="p-3"><span class="${pColor} px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide">${row.priority}</span></td>
-                        <td class="p-3">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold border border-indigo-200">${row.assign.charAt(0)}</div>
-                                <span class="text-sm text-gray-600 font-medium">${row.assign}</span>
+                        <td class="p-3 border-b font-mono font-bold text-gray-500 text-[10px] sm:text-xs">#${row.id}</td>
+                        <td class="p-3 border-b"><span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold whitespace-nowrap">${row.module}</span></td>
+                        <td class="p-3 border-b text-[10px] sm:text-xs text-gray-500 whitespace-nowrap">${row.date}</td>
+                        <td class="p-3 border-b text-gray-700 text-xs sm:text-sm leading-snug w-auto min-w-[200px] whitespace-normal break-words">${row.description}</td>
+                        <td class="p-3 border-b">${linkHtml}</td>
+                        <td class="p-3 border-b"><span class="${pColor} px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wide">${row.priority}</span></td>
+                        <td class="p-3 border-b">
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold border border-indigo-200">${row.assign.charAt(0)}</div>
+                                <span class="text-xs sm:text-sm text-gray-600 font-medium whitespace-nowrap">${row.assign}</span>
                             </div>
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 border-b">
                             <div class="flex items-center ${statusColorClass}">
-                                <i class="fa-solid fa-circle text-[8px] mr-2"></i>
+                                <i class="fa-solid fa-circle text-[6px] sm:text-[8px] mr-1.5 sm:mr-2"></i>
                                 ${statusSelectHtml}
                             </div>
                         </td>
@@ -505,25 +518,34 @@
             });
         }
 
+        // --- UPDATED: REMOVED STATIC REPORTERS ---
         function populateFilters() {
             const modules = new Set(allData.map(d => d.module));
             const priorities = new Set(allData.map(d => d.priority));
-            const reported = new Set(allData.map(d => d.reported));
+            const reported = new Set(allData.map(d => d.reported).filter(r => r && r.trim() !== ""));
             const assignees = new Set(allData.map(d => d.assign));
+            
             fillSelect('filter-module', modules);
             fillSelect('filter-priority', priorities);
             fillSelect('filter-reported', reported);
             fillSelect('filter-assignee', assignees);
+            
             const modSelect = document.getElementById('modal-module');
             modSelect.innerHTML = '<option value="">Select Module</option>';
             ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
+            
             const priSelect = document.getElementById('modal-priority');
             priSelect.innerHTML = '<option value="">Select Priority</option>';
             ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
-            const repList = document.getElementById('reporters-list');
-            repList.innerHTML = '';
-            reported.forEach(r => { if(r) repList.innerHTML += `<option value="${r}">`; });
+            
+            // --- FIX: Only Real Data for Reported By ---
+            const repSelect = document.getElementById('modal-reporter');
+            repSelect.innerHTML = '<option value="">Select Reporter</option>';
+            Array.from(reported).sort().forEach(r => {
+                repSelect.innerHTML += `<option value="${r}">${r}</option>`;
+            });
         }
+        
         function fillSelect(id, set) { const el = document.getElementById(id); el.innerHTML = '<option value="">All</option>'; set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; }); }
         function applyFilters() {
             const filters = { module: document.getElementById('filter-module').value, priority: document.getElementById('filter-priority').value, reported: document.getElementById('filter-reported').value, assignee: document.getElementById('filter-assignee').value, search: document.getElementById('global-search').value.toLowerCase() };
@@ -543,20 +565,7 @@
         function filterByStatus(status) { currentStatusFilter = status; applyFilters(); }
         function calculateNextId() { if (allData.length === 0) return 1001; const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id)); const maxId = ids.length > 0 ? Math.max(...ids) : 1000; return maxId + 1; }
         function openModal() { const modal = document.getElementById('issueModal'); modal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); document.getElementById('modal-id').value = calculateNextId(); populateFilters(); }
-        function closeModal() {
-            // Reset the form fields inside the modal
-            document.getElementById('issueForm').reset();
-            
-            // Reset custom UI elements
-            document.getElementById('file-name-display').innerText = "No file chosen";
-            document.getElementById('file-name-display').classList.remove('text-blue-600', 'font-semibold');
-            document.getElementById('upload-progress-container').classList.add('hidden');
-            document.getElementById('upload-status-text').classList.add('hidden');
-            
-            // Hide modal and restore scroll
-            document.getElementById('issueModal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
+        function closeModal() { document.getElementById('issueModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); document.getElementById('issueForm').reset(); document.getElementById('upload-progress-container').classList.add('hidden'); document.getElementById('upload-status-text').classList.add('hidden'); document.getElementById('file-name-display').innerText = "No file chosen"; document.getElementById('file-name-display').classList.remove('text-blue-600', 'font-semibold'); }
         function updateFileName() { const fileInput = document.getElementById('modal-file'); const display = document.getElementById('file-name-display'); if (fileInput.files.length > 0) { display.innerText = fileInput.files[0].name; display.classList.add('text-blue-600', 'font-semibold'); } else { display.innerText = "No file chosen"; display.classList.remove('text-blue-600', 'font-semibold'); } }
         async function submitIssue(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); const fileInput = document.getElementById('modal-file'); let finalLink = document.getElementById('modal-link').value; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
@@ -577,7 +586,7 @@
                 const formData = { action: "submit", module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink };
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) });
                 const result = await res.json();
-                if(result.status === 'success') { alert("Success! Issue #" + result.id + " Created."); closeModal(); document.getElementById('issueForm').reset(); fetchData(); } else { throw new Error("Sheet Save Failed"); }
+                if(result.status === 'success') { alert("Success! Issue #" + result.id + " Created."); closeModal(); fetchData(); } else { throw new Error("Sheet Save Failed"); }
             } catch (err) { alert("Error: " + err.message); } finally { btn.disabled = false; btn.innerText = "Submit Issue"; }
         }
         function openAssignSelector() { const reporters = new Set(allData.map(d => d.reported).filter(r => r)); const select = document.getElementById('assign-reporter-select'); select.innerHTML = '<option value="">Select a person...</option>'; reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`); document.getElementById('assignSelectorModal').classList.remove('hidden'); }
@@ -599,7 +608,6 @@
         }
         async function submitAssignment(e) {
             e.preventDefault(); const btn = document.getElementById('assign-submit-btn'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-            // UPDATED: ADDED notificationType: "assign"
             const payload = { action: "update", notificationType: "assign", rowIndex: document.getElementById('assign-row-index').value, id: document.getElementById('assign-id').value, module: document.getElementById('assign-module').value, priority: document.getElementById('assign-priority').value, description: document.getElementById('assign-desc').value, assignee: document.getElementById('assign-dev').value };
             try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await res.json(); if(result.status === 'success') { const target = assignableIssues[currentAssignIndex]; target.description = payload.description; target.assign = payload.assignee; currentAssignIndex++; loadAssignIssue(); } else { throw new Error(result.message); } } catch (err) { alert("Update Failed: " + err.message); } finally { btn.disabled = false; btn.innerText = "Assign & Save"; }
         }

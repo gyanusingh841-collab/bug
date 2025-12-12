@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bug Tracker Dashboard</title>
+    <title>TalentWale Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
-        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .loader { border-top-color: #3498db; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); }
+        .loader { border-top-color: #3b82f6; -webkit-animation: spinner 1.0s linear infinite; animation: spinner 1.0s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(0.5); }
         .modal-scroll { scroll-behavior: smooth; }
-        .modal-scroll::-webkit-scrollbar { width: 8px; }
-        .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .modal-scroll::-webkit-scrollbar { width: 6px; }
+        .modal-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .compact-select { -webkit-appearance: none; -moz-appearance: none; text-overflow: ellipsis; }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-700">
 
-    <!-- Navbar (Fixed & Stacked on Mobile) -->
-    <nav class="bg-white shadow-md fixed w-full z-50 top-0 left-0">
+    <!-- Navbar -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 fixed w-full z-50 top-0 left-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row justify-between items-center py-3 sm:h-16 space-y-3 sm:space-y-0">
-                <!-- Logo Section -->
                 <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
-                    <div class="flex items-center">
-                        <i class="fa-solid fa-bug text-red-600 text-xl sm:text-2xl mr-2"></i>
-                        <h1 class="text-lg sm:text-xl font-bold whitespace-nowrap">Bug Tracker Pro</h1>
+                    <div class="flex items-center gap-2">
+                        <div class="bg-indigo-600 text-white p-1.5 rounded-lg">
+                            <i class="fa-solid fa-bug text-lg"></i>
+                        </div>
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-800">TalentWale <span class="text-indigo-600">Pro</span></h1>
                     </div>
-                    <!-- Connection Status -->
-                    <span class="ml-auto sm:ml-3 text-[10px] sm:text-xs font-normal text-green-600 border border-green-200 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap" id="connection-status">Connecting...</span>
+                    <span class="ml-auto sm:ml-4 text-[10px] sm:text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5" id="connection-status">
+                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                        Connecting...
+                    </span>
                 </div>
-
-                <!-- Buttons Section -->
-                <div class="flex w-full sm:w-auto justify-center space-x-2 sm:space-x-3">
-                    <button onclick="openAssignSelector()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shadow-md transition transform active:scale-95 whitespace-nowrap">
-                        <i class="fa-solid fa-user-check"></i> <span>Assign</span>
+                <div class="flex w-full sm:w-auto justify-center gap-3">
+                    <button onclick="openAssignSelector()" class="flex-1 sm:flex-none justify-center bg-white border border-gray-300 hover:bg-gray-50 text-slate-700 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow-sm">
+                        <i class="fa-solid fa-user-check text-indigo-500"></i> Assign
                     </button>
-                    <button onclick="openModal()" class="flex-1 sm:flex-none justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shadow-md transition transform active:scale-95 whitespace-nowrap">
-                        <i class="fa-solid fa-plus"></i> <span>Report</span>
+                    <button onclick="openModal()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-md shadow-indigo-200 transition transform active:scale-95">
+                        <i class="fa-solid fa-plus"></i> Report Issue
                     </button>
                 </div>
             </div>
@@ -49,82 +51,120 @@
     </nav>
 
     <!-- Main Content -->
-    <!-- Increased top padding for mobile to prevent overlap with stacked header -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[120px] sm:pt-24 pb-10">
-        
-        <div id="loader" class="flex justify-center items-center py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[140px] sm:pt-28 pb-12">
+        <div id="loader" class="flex flex-col justify-center items-center py-32">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+            <p class="text-slate-400 text-sm font-medium">Fetching Issues...</p>
         </div>
 
-        <div id="dashboard-content" class="hidden">
-            <!-- Header Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                <div onclick="filterByStatus('Total')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-gray-500 hover:bg-gray-50 transition transform hover:-translate-y-1">
-                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">TOTAL BUGS</p>
-                    <h2 class="text-xl sm:text-3xl font-bold mt-1" id="count-total">0</h2>
-                </div>
-                <div onclick="filterByStatus('Pending')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-yellow-500 hover:bg-yellow-50 transition transform hover:-translate-y-1">
-                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">PENDING</p>
-                    <h2 class="text-xl sm:text-3xl font-bold text-yellow-600 mt-1" id="count-pending">0</h2>
-                </div>
-                <div onclick="filterByStatus('Done')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-green-500 hover:bg-green-50 transition transform hover:-translate-y-1">
-                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">DONE</p>
-                    <h2 class="text-xl sm:text-3xl font-bold text-green-600 mt-1" id="count-done">0</h2>
-                </div>
-                <div onclick="filterByStatus('Other')" class="bg-white p-3 sm:p-5 rounded-lg card-shadow cursor-pointer border-l-4 border-purple-500 hover:bg-purple-50 transition transform hover:-translate-y-1">
-                    <p class="text-[10px] sm:text-sm text-gray-500 font-bold uppercase">OTHER</p>
-                    <h2 class="text-xl sm:text-3xl font-bold text-purple-600 mt-1" id="count-other">0</h2>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-                <div class="bg-white p-4 sm:p-6 rounded-lg card-shadow">
-                    <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center text-sm sm:text-base">
-                        <span>Priority Distribution</span>
-                        <span class="text-[10px] sm:text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Filtered Data</span>
-                    </h3>
-                    <div class="h-48 sm:h-64"><canvas id="priorityChart"></canvas></div>
-                </div>
-                <div class="bg-white p-4 sm:p-6 rounded-lg card-shadow">
-                    <h3 class="font-bold text-gray-700 mb-4 flex justify-between items-center text-sm sm:text-base">
-                        <span>Assignee Workload</span>
-                        <span class="text-[10px] sm:text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Sorted (High to Low)</span>
-                    </h3>
-                    <div class="h-48 sm:h-64"><canvas id="assigneeChart"></canvas></div>
-                </div>
-            </div>
-
-            <!-- Filter Header & Search Section -->
-            <div class="bg-white p-4 sm:p-5 rounded-lg card-shadow mb-6">
-                <div class="flex items-center gap-2 mb-4 border-b pb-2">
-                    <i class="fa-solid fa-filter text-indigo-600"></i>
-                    <h3 class="text-sm sm:text-lg font-bold text-gray-800">Advanced Filters & Search</h3>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 sm:gap-4">
-                    <div class="md:col-span-1">
-                        <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Search</label>
-                        <div class="relative">
-                            <input type="text" id="global-search" placeholder="Search..." class="w-full border border-gray-300 rounded-lg p-2 pl-8 text-sm focus:ring-2 focus:ring-indigo-500">
-                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i></div>
+        <div id="dashboard-content" class="hidden space-y-6">
+            <!-- Date Filter -->
+            <div class="bg-white rounded-xl border border-gray-200 p-1 sm:p-2 shadow-sm">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-4 p-3">
+                    <div class="flex items-center gap-3 w-full lg:w-auto border-b lg:border-b-0 pb-3 lg:pb-0 border-gray-100">
+                        <div class="bg-blue-50 p-2 rounded-lg text-blue-600">
+                            <i class="fa-regular fa-calendar-days text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Time Period</h3>
+                            <p class="text-xs text-slate-500">Filter data by date range</p>
                         </div>
                     </div>
-                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Module</label><select id="filter-module" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Modules</option></select></div>
-                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Priority</label><select id="filter-priority" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Priorities</option></select></div>
-                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Reported By</label><select id="filter-reported" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Reporters</option></select></div>
-                    <div><label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label><select id="filter-assignee" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50"><option value="">All Assignees</option></select></div>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center">
+                        <div class="relative w-full sm:w-40">
+                            <select id="date-preset" onchange="applyDatePreset()" class="w-full appearance-none bg-gray-50 border border-gray-200 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-8 font-medium cursor-pointer hover:bg-gray-100 transition">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="custom" class="hidden">Custom Range</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"><i class="fa-solid fa-chevron-down text-xs"></i></div>
+                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto bg-gray-50 p-1 rounded-lg border border-gray-200">
+                            <div class="relative flex-1"><div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><span class="text-gray-400 text-xs font-bold">From</span></div><input type="date" id="date-start" oninput="switchToCustomDate()" onchange="applyFilters()" class="bg-transparent border-0 text-slate-700 text-sm rounded-lg focus:ring-0 block w-full pl-12 p-1.5 cursor-pointer placeholder-gray-400"></div>
+                            <div class="h-4 w-px bg-gray-300"></div>
+                            <div class="relative flex-1"><div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><span class="text-gray-400 text-xs font-bold">To</span></div><input type="date" id="date-end" oninput="switchToCustomDate()" onchange="applyFilters()" class="bg-transparent border-0 text-slate-700 text-sm rounded-lg focus:ring-0 block w-full pl-8 p-1.5 cursor-pointer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div onclick="filterByStatus('Total')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-indigo-100" id="card-Total">
+                    <div class="absolute right-0 top-0 h-full w-1 bg-gray-800 group-hover:w-2 transition-all"></div>
+                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Issues</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800" id="count-total">0</h2>
+                </div>
+                <div onclick="filterByStatus('Pending')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-yellow-100" id="card-Pending">
+                    <div class="absolute right-0 top-0 h-full w-1 bg-yellow-500 group-hover:w-2 transition-all"></div>
+                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-yellow-600" id="count-pending">0</h2>
+                </div>
+                <div onclick="filterByStatus('Done')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-emerald-100" id="card-Done">
+                    <div class="absolute right-0 top-0 h-full w-1 bg-emerald-500 group-hover:w-2 transition-all"></div>
+                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Resolved</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-emerald-600" id="count-done">0</h2>
+                </div>
+                <div onclick="filterByStatus('Other')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-purple-100" id="card-Other">
+                    <div class="absolute right-0 top-0 h-full w-1 bg-purple-500 group-hover:w-2 transition-all"></div>
+                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Others</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-purple-600" id="count-other">0</h2>
+                </div>
+            </div>
+
+            <!-- TREND CHART -->
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm sm:text-base border-b pb-3">
+                    <span class="bg-blue-100 text-blue-600 p-1.5 rounded-md"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                    Activity Trend <span class="text-xs font-normal text-gray-400 ml-auto" id="trend-label">(Daily)</span>
+                </h3>
+                <div class="h-64"><canvas id="trendChart"></canvas></div>
+            </div>
+
+            <!-- Existing Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm sm:text-base border-b pb-3">Priority Distribution</h3>
+                    <div class="h-56"><canvas id="priorityChart"></canvas></div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm sm:text-base border-b pb-3">Assignee Workload</h3>
+                    <div class="h-56"><canvas id="assigneeChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-4 border-b pb-3">
+                    <span class="bg-indigo-100 text-indigo-600 p-1.5 rounded-md"><i class="fa-solid fa-filter text-sm"></i></span>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-800">Advanced Search</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="md:col-span-1">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Keyword</label>
+                        <div class="relative">
+                            <input type="text" id="global-search" placeholder="Search any text..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 pl-9 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i></div>
+                        </div>
+                    </div>
+                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Module</label><select id="filter-module" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Modules</option></select></div>
+                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Priority</label><select id="filter-priority" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Priorities</option></select></div>
+                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Reported By</label><select id="filter-reported" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Reporters</option></select></div>
+                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Assigned To</label><select id="filter-assignee" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Assignees</option></select></div>
                 </div>
             </div>
 
             <!-- Table -->
-            <div class="bg-white rounded-lg card-shadow overflow-hidden">
-                <div class="p-3 sm:p-4 border-b flex justify-between bg-gray-50 items-center">
-                    <h3 class="font-bold text-gray-700 text-sm sm:text-base">Issue Details</h3>
-                    <select id="rows-per-page" class="border rounded p-1 text-xs sm:text-sm bg-white"><option value="10">10</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select>
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-gray-200 flex justify-between bg-gray-50/50 items-center">
+                    <h3 class="font-bold text-slate-800 text-sm">Issue Details</h3>
+                    <select id="rows-per-page" class="bg-white border border-gray-300 rounded-md p-1 px-2 text-xs font-medium text-slate-600 focus:ring-indigo-500"><option value="10">10 Rows</option><option value="30">30 Rows</option><option value="50">50 Rows</option><option value="100">100 Rows</option></select>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-100 uppercase text-[10px] sm:text-xs text-gray-600 sticky top-0">
+                        <thead class="bg-gray-100/80 uppercase text-[10px] font-bold text-slate-500 tracking-wider sticky top-0">
                             <tr>
                                 <th class="p-3 border-b w-[5%]">ID</th>
                                 <th class="p-3 border-b w-[10%]">Module</th>
@@ -139,184 +179,52 @@
                         <tbody id="table-body" class="divide-y divide-gray-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
-                <div class="p-3 sm:p-4 border-t flex justify-between bg-gray-50 items-center">
-                    <span id="pagination-info" class="text-[10px] sm:text-sm text-gray-600">Showing 0-0</span>
+                <div class="p-3 border-t border-gray-200 flex justify-between bg-gray-50/50 items-center">
+                    <span id="pagination-info" class="text-[10px] sm:text-xs font-medium text-slate-500">Loading...</span>
                     <div class="flex gap-2">
-                        <button id="prev-btn" class="px-3 py-1 border rounded bg-white hover:bg-gray-100 disabled:opacity-50 text-xs sm:text-sm">Prev</button>
-                        <button id="next-btn" class="px-3 py-1 border rounded bg-white hover:bg-gray-100 disabled:opacity-50 text-xs sm:text-sm">Next</button>
+                        <button id="prev-btn" class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 text-xs font-medium text-slate-600 transition">Previous</button>
+                        <button id="next-btn" class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 text-xs font-medium text-slate-600 transition">Next</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 1: REPORT ISSUE -->
-    <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0">
-        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-4 sm:p-5 relative z-10 transform transition-all scale-100 mx-4 border border-gray-200 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll">
-            <div class="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b sticky top-0 bg-white z-20">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Report New Issue</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl sm:text-2xl"></i></button>
-            </div>
-            <form id="issueForm" onsubmit="submitIssue(event)" class="space-y-3">
-                <div class="mb-2">
-                    <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Issue ID (Next)</label>
-                    <input type="text" id="modal-id" readonly class="w-full bg-blue-50 border border-blue-200 text-blue-800 font-bold p-2 rounded-lg text-center cursor-not-allowed text-sm">
-                </div>
-                <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                    <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Module <span class="text-red-500">*</span></label>
-                        <select id="modal-module" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"><option value="">Select Module</option></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Priority <span class="text-red-500">*</span></label>
-                        <select id="modal-priority" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"><option value="">Select Priority</option></select>
-                    </div>
-                </div>
-                
-                <!-- CHANGED: No Input List, Only Dropdown -->
-                <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Reported By <span class="text-red-500">*</span></label>
-                    <select id="modal-reporter" required class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
-                        <option value="">Select Reporter</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-                    <textarea id="modal-desc" required placeholder="Describe the issue..." class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 h-20 resize-none text-sm"></textarea>
-                </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">Evidence / Attachment</label>
-                    <div class="flex flex-col gap-2">
-                        <input type="url" id="modal-link" placeholder="Paste external link (Optional)" class="w-full border border-gray-300 p-2 rounded text-xs sm:text-sm">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] sm:text-xs font-bold text-gray-500 uppercase">OR Upload</span>
-                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded shadow-sm text-xs sm:text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up text-blue-500"></i> Choose File
-                                <input type="file" id="modal-file" class="hidden" onchange="updateFileName()">
-                            </label>
-                            <span id="file-name-display" class="text-[10px] sm:text-xs text-gray-500 italic truncate max-w-[200px]">No file chosen</span>
-                        </div>
-                        <div id="upload-progress-container" class="hidden w-full bg-gray-200 rounded-full h-2 mt-1">
-                            <div id="upload-progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                        <p id="upload-status-text" class="text-[10px] sm:text-xs text-green-600 font-semibold hidden text-center">Starting upload...</p>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
-                    <button type="button" onclick="closeModal()" class="px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-xs sm:text-sm">Cancel</button>
-                    <button type="submit" id="submit-btn" class="px-4 sm:px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md font-medium text-xs sm:text-sm">Submit Issue</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL 2: ASSIGN SELECTOR (Responsive) -->
-    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0">
-        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeAssignSelector()"></div>
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-5 sm:p-6 relative z-10 transform transition-all scale-100 mx-4">
-            <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">Who reported the issues?</h3>
-            <div class="mb-4">
-                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Select Reporter</label>
-                <select id="assign-reporter-select" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <option value="">Select a person...</option>
-                </select>
-            </div>
-            <div class="flex justify-end gap-2">
-                <button onclick="closeAssignSelector()" class="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 rounded text-xs sm:text-sm">Cancel</button>
-                <button onclick="startAssignment()" class="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs sm:text-sm">Start Assigning</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 3: ASSIGN ISSUE (WIZARD - Responsive) -->
-    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0">
-        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
-        <div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-4 sm:p-5 relative z-10 transform transition-all scale-100 border border-gray-200 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll">
-            <div class="flex justify-between items-center mb-3 sm:mb-4 pb-2 border-b sticky top-0 bg-white z-20">
-                <div>
-                    <h3 class="text-lg sm:text-xl font-bold text-gray-800">Assign Issues</h3>
-                    <p class="text-[10px] sm:text-xs text-gray-500">Reviewing issues by: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p>
-                </div>
-                <button onclick="closeAssignModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl sm:text-2xl"></i></button>
-            </div>
-            <div id="assign-loading" class="hidden text-center py-10">
-                <i class="fa-solid fa-spinner fa-spin text-2xl sm:text-3xl text-indigo-500"></i>
-                <p class="mt-2 text-xs sm:text-sm text-gray-500">Updating...</p>
-            </div>
-            <form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-3">
-                <input type="hidden" id="assign-row-index"> 
-                <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Issue ID</label>
-                        <input type="text" id="assign-id" readonly class="w-full bg-gray-100 border border-gray-300 font-bold p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold text-gray-500 uppercase mb-1">Date</label>
-                        <input type="text" id="assign-date" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Module</label>
-                        <input type="text" id="assign-module" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
-                    </div>
-                    <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Priority</label>
-                        <input type="text" id="assign-priority" readonly class="w-full bg-gray-100 border border-gray-300 p-2 rounded-lg text-gray-600 text-sm cursor-not-allowed">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Description (Editable)</label>
-                    <textarea id="assign-desc" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 h-20 resize-none bg-white text-sm"></textarea>
-                </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                    <span class="text-xs sm:text-sm font-bold text-gray-700">Attachment:</span>
-                    <div id="assign-link-container"><span class="text-gray-400 italic text-xs sm:text-sm">No attachment</span></div>
-                </div>
-                <div class="border-t pt-3 mt-3">
-                    <label class="block text-xs sm:text-sm font-bold text-indigo-700 mb-1">Assign To Developer <span class="text-red-500">*</span></label>
-                    <input list="developers-list" id="assign-dev" required placeholder="Select Developer..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white text-sm">
-                    <datalist id="developers-list"></datalist>
-                </div>
-                <div class="flex justify-between gap-3 pt-3 border-t bg-white sticky bottom-0 z-20">
-                    <button type="button" onclick="skipAssignment()" class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-xs sm:text-sm">Skip / Next</button>
-                    <button type="submit" id="assign-submit-btn" class="px-4 sm:px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md font-medium text-xs sm:text-sm">Assign & Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Modals -->
+    <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div><div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-5 relative z-10 transform transition-all scale-100 border border-gray-200 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll"><div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20"><h3 class="text-xl font-bold text-slate-800">Report Issue</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button></div><form id="issueForm" onsubmit="submitIssue(event)" class="space-y-4"><div class="mb-2"><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Issue ID</label><input type="text" id="modal-id" readonly class="w-full bg-slate-50 border border-slate-200 text-slate-700 font-bold p-2.5 rounded-lg"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><select id="modal-module" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"><option value="">Select</option></select></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><select id="modal-priority" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"><option value="">Select</option></select></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Reported By</label><select id="modal-reporter" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"><option value="">Select Reporter</option></select></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="modal-desc" required class="w-full border border-slate-300 p-2.5 rounded-lg h-24 text-sm resize-none"></textarea></div><div class="bg-slate-50 p-3 rounded-lg border border-slate-200"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Attachment</label><div class="flex flex-col gap-2"><input type="url" id="modal-link" placeholder="External Link (Optional)" class="w-full border border-slate-300 p-2 rounded text-xs"><div class="flex items-center gap-3"><label class="cursor-pointer bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-indigo-500"></i> Upload File<input type="file" id="modal-file" class="hidden" onchange="updateFileName()"></label><span id="file-name-display" class="text-xs text-slate-400 italic truncate">No file</span></div><div id="upload-progress-container" class="hidden w-full bg-slate-200 rounded-full h-1.5 mt-2"><div id="upload-progress-bar" class="bg-emerald-500 h-1.5 rounded-full w-0 transition-all duration-300"></div></div><p id="upload-status-text" class="text-[10px] text-emerald-600 font-bold hidden text-center mt-1">Uploading...</p></div></div><div class="flex justify-end gap-3 pt-2"><button type="button" onclick="closeModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancel</button><button type="submit" id="submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md text-sm font-medium">Submit</button></div></form></div></div>
+    
+    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeAssignSelector()"></div><div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative z-10 scale-100"><h3 class="text-lg font-bold text-slate-800 mb-4">Select Reporter</h3><select id="assign-reporter-select" class="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm mb-4"><option value="">Choose Name...</option></select><div class="flex justify-end gap-2"><button onclick="closeAssignSelector()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">Cancel</button><button onclick="startAssignment()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Next</button></div></div></div>
+    
+    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div><div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-5 relative z-10 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll"><div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20"><div><h3 class="text-lg font-bold text-slate-800">Assign Issues</h3><p class="text-xs text-slate-500">Reporter: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p></div><button onclick="closeAssignModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-4"><input type="hidden" id="assign-row-index"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">ID</label><input type="text" id="assign-id" readonly class="w-full bg-slate-50 border border-slate-200 text-slate-600 font-bold p-2 rounded-lg text-sm"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Date</label><input type="text" id="assign-date" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm text-slate-600"></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><input type="text" id="assign-module" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm text-slate-600"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><input type="text" id="assign-priority" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm text-slate-600"></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="assign-desc" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm h-20 resize-none bg-white"></textarea></div><div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Attachment</span><div id="assign-link-container"><span class="text-slate-400 italic text-xs">None</span></div></div><div class="border-t pt-4"><label class="block text-sm font-bold text-indigo-700 mb-1">Assign Developer</label><input list="developers-list" id="assign-dev" required placeholder="Type or Select..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"><datalist id="developers-list"></datalist></div><div class="flex justify-between pt-2 border-t mt-2"><button type="button" onclick="skipAssignment()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 text-sm font-medium">Skip</button><button type="submit" id="assign-submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md text-sm font-medium">Assign & Save</button></div></form></div></div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEh3NbEnMXcFJUnhcfPPPP7_KURFIVVevfvuOG5zJO47JPssDtya7w1tBqySI2d0nnKQ/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyClh6YxCydhuZs9qSPHBvzzvP_tyiwOJW_Fr_EXwpOvaqpbNdJ3IpdSWVintDVIF8U/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
         let allData = [];
+        let dateFilteredData = [];
         let filteredData = [];
+        
         let assignableIssues = []; 
         let currentAssignIndex = 0; 
         let currentPage = 1;
         let rowsPerPage = 10;
         let currentStatusFilter = 'Total';
+        let isTodayFilter = false;
 
         window.onload = function() {
             fetchData();
             document.getElementById('rows-per-page').addEventListener('change', (e) => { rowsPerPage = +e.target.value; renderTable(); });
             document.getElementById('prev-btn').addEventListener('click', () => { if(currentPage>1) {currentPage--; renderTable();} });
             document.getElementById('next-btn').addEventListener('click', () => { if(currentPage < Math.ceil(filteredData.length/rowsPerPage)) {currentPage++; renderTable();} });
-            
             document.getElementById('global-search').addEventListener('input', applyFilters);
-
-            ['filter-module', 'filter-priority', 'filter-reported', 'filter-assignee'].forEach(id => {
-                document.getElementById(id).addEventListener('change', applyFilters);
-            });
+            ['filter-module', 'filter-priority', 'filter-reported', 'filter-assignee'].forEach(id => { document.getElementById(id).addEventListener('change', applyFilters); });
         };
 
         async function fetchData() {
             try {
                 const res = await fetch(SCRIPT_URL, { redirect: "follow" });
-                if (!res.ok) throw new Error("Failed to fetch");
+                if (!res.ok) throw new Error("Failed");
                 const data = await res.json();
                 if(data.error) throw new Error(data.error);
                 
@@ -326,293 +234,329 @@
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('dashboard-content').classList.remove('hidden');
                 document.getElementById('connection-status').innerText = "Connected";
-                document.getElementById('connection-status').className = "ml-auto sm:ml-3 text-[10px] sm:text-xs font-normal text-green-600 border border-green-200 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap";
+                document.getElementById('connection-status').className = "ml-auto sm:ml-4 text-[10px] sm:text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5";
                 
                 populateFilters(); 
-                updateDashboard();
+                document.getElementById('date-preset').value = 'all';
+                applyDatePreset();
             } catch (err) {
                 console.error(err);
-                alert("Connection Error: " + err.message);
+                alert("Connection Error");
             }
         }
 
-        async function updateStatus(id, rowIndex, newStatus) {
-            const selectElem = document.querySelector(`select[data-id="${id}"]`);
-            if(selectElem) {
-                selectElem.disabled = true;
-                selectElem.classList.add('opacity-50', 'cursor-wait');
+        function switchToCustomDate() {
+            const presetSelect = document.getElementById('date-preset');
+            const customOpt = presetSelect.querySelector('option[value="custom"]');
+            if(customOpt) { customOpt.classList.remove('hidden'); presetSelect.value = 'custom'; }
+            isTodayFilter = false;
+        }
+
+        function applyDatePreset() {
+            const preset = document.getElementById('date-preset').value;
+            const startInput = document.getElementById('date-start');
+            const endInput = document.getElementById('date-end');
+            isTodayFilter = (preset === 'today');
+
+            if(preset !== 'custom') {
+                 const customOpt = document.getElementById('date-preset').querySelector('option[value="custom"]');
+                 if(customOpt) customOpt.classList.add('hidden');
             }
 
-            const item = allData.find(d => d.id == id);
-            
-            const payload = {
-                action: "update",
-                notificationType: "status", 
-                rowIndex: rowIndex,
-                id: id,
-                status: newStatus,
-                module: item ? item.module : "Default", 
-                priority: item ? item.priority : "-",
-                reported: item ? item.reported : "-",
-                description: item ? item.description : "-",
-                assignee: item ? item.assign : null 
+            const getLocalStr = (d) => {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             };
 
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-                const result = await res.json();
-                
-                if(result.status === 'success') {
-                    if(item) item.status = newStatus;
-                    updateDashboard(); 
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch (err) {
-                alert("Status Update Failed: " + err.message);
-                if(selectElem) selectElem.disabled = false;
-            } finally {
-                if(selectElem) {
-                    selectElem.disabled = false;
-                    selectElem.classList.remove('opacity-50', 'cursor-wait');
-                }
+            const today = new Date();
+            let start, end;
+
+            if (preset === 'today') {
+                start = end = today;
+            } else if (preset === 'week') {
+                const day = today.getDay();
+                const diff = today.getDate() - day + (day === 0 ? -6 : 1); 
+                start = new Date(today);
+                start.setDate(diff);
+                end = new Date(); 
+            } else if (preset === 'month') {
+                start = new Date(today.getFullYear(), today.getMonth(), 1);
+                end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            } else if (preset === 'all') {
+                startInput.value = ''; endInput.value = '';
+                applyFilters();
+                return;
+            } else {
+                return; 
             }
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            const start = (currentPage - 1) * rowsPerPage;
-            const pageData = filteredData.slice(start, start + rowsPerPage);
-            document.getElementById('pagination-info').innerText = `Showing ${start+1}-${Math.min(start+rowsPerPage, filteredData.length)} of ${filteredData.length}`;
-            
-            if(pageData.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center">No Data Found</td></tr>'; return; }
-
-            const uniqueStatuses = new Set(allData.map(d => d.status).filter(s => s && s.trim() !== ""));
-            const statusOptions = Array.from(uniqueStatuses).sort();
-
-            pageData.forEach(row => {
-                let linkHtml = '<span class="text-gray-300 text-[10px] italic">No Attach</span>';
-                if(row.link) {
-                    const isDrive = row.link.includes('drive.google.com');
-                    if(isDrive) {
-                        linkHtml = `
-                        <a href="${row.link}" target="_blank" title="Open Drive File" 
-                           class="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow hover:bg-gray-50 transition text-[10px] font-semibold text-gray-700 group whitespace-nowrap">
-                            <i class="fa-brands fa-google-drive text-green-600 text-xs"></i>
-                            <span class="group-hover:text-green-700">View</span>
-                        </a>`;
-                    } else {
-                        linkHtml = `
-                        <a href="${row.link}" target="_blank" title="Open External Link"
-                           class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-50 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-200 transition text-[10px] font-semibold text-blue-600 group whitespace-nowrap">
-                            <i class="fa-solid fa-link text-[10px]"></i>
-                            <span class="group-hover:underline">View</span>
-                        </a>`;
-                    }
-                }
-                
-                let pColor = 'bg-gray-100 text-gray-800';
-                if(row.priority === 'High') pColor = 'bg-red-50 text-red-700 border border-red-100';
-                else if(row.priority === 'Medium') pColor = 'bg-yellow-50 text-yellow-700 border border-yellow-100';
-                else if(row.priority === 'Low') pColor = 'bg-green-50 text-green-700 border border-green-100';
-                
-                let statusSelectHtml = `<select data-id="${row.id}" onchange="updateStatus('${row.id}', '${row.rowIndex}', this.value)" class="bg-transparent text-[10px] sm:text-xs font-bold uppercase cursor-pointer border-none focus:ring-0 p-0 pr-4 w-auto max-w-[90px] truncate">`;
-                
-                if (!row.status || row.status.trim() === "") {
-                    statusSelectHtml += `<option value="" selected class="text-gray-400 italic">--</option>`;
-                }
-
-                statusOptions.forEach(opt => {
-                    const selected = (row.status === opt) ? 'selected' : '';
-                    statusSelectHtml += `<option value="${opt}" ${selected}>${opt}</option>`;
-                });
-                statusSelectHtml += `</select>`;
-
-                let statusColorClass = 'text-gray-600';
-                if(row.status === 'Done') statusColorClass = 'text-green-600';
-                else if(row.status === 'Pending') statusColorClass = 'text-yellow-600';
-                else if(row.status === 'In Progress') statusColorClass = 'text-blue-600';
-                else if(row.status === 'Dropped') statusColorClass = 'text-red-500';
-
-                const tr = `
-                    <tr class="border-b hover:bg-gray-50 transition duration-150">
-                        <td class="p-3 border-b font-mono font-bold text-gray-500 text-[10px] sm:text-xs">#${row.id}</td>
-                        <td class="p-3 border-b"><span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold whitespace-nowrap">${row.module}</span></td>
-                        <td class="p-3 border-b text-[10px] sm:text-xs text-gray-500 whitespace-nowrap">${row.date}</td>
-                        <td class="p-3 border-b text-gray-700 text-xs sm:text-sm leading-snug w-auto min-w-[200px] whitespace-normal break-words">${row.description}</td>
-                        <td class="p-3 border-b">${linkHtml}</td>
-                        <td class="p-3 border-b"><span class="${pColor} px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wide">${row.priority}</span></td>
-                        <td class="p-3 border-b">
-                            <div class="flex items-center gap-1.5 sm:gap-2">
-                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold border border-indigo-200">${row.assign.charAt(0)}</div>
-                                <span class="text-xs sm:text-sm text-gray-600 font-medium whitespace-nowrap">${row.assign}</span>
-                            </div>
-                        </td>
-                        <td class="p-3 border-b">
-                            <div class="flex items-center ${statusColorClass}">
-                                <i class="fa-solid fa-circle text-[6px] sm:text-[8px] mr-1.5 sm:mr-2"></i>
-                                ${statusSelectHtml}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += tr;
-            });
-        }
-
-        // --- Other Functions (Standard) ---
-        function updateDashboard() {
-            let counts = { Total: allData.length, Pending: 0, Done: 0, Other: 0 };
-            
-            allData.forEach(d => {
-                const s = (d.status || "").toLowerCase().trim();
-                
-                if(s === 'pending') {
-                    counts.Pending++;
-                } else if(s === 'done') {
-                    counts.Done++;
-                } else {
-                    counts.Other++;
-                }
-            });
-            
-            document.getElementById('count-total').innerText = counts.Total;
-            document.getElementById('count-pending').innerText = counts.Pending;
-            document.getElementById('count-done').innerText = counts.Done;
-            document.getElementById('count-other').innerText = counts.Other;
-            
+            startInput.value = getLocalStr(start);
+            endInput.value = getLocalStr(end);
             applyFilters();
         }
 
-        function renderCharts() {
-            const pCounts = {}; const aCounts = {};
-            filteredData.forEach(d => {
-                pCounts[d.priority || "Unknown"] = (pCounts[d.priority || "Unknown"] || 0) + 1;
-                const assignee = (d.assign && d.assign !== 'Unassigned') ? d.assign : 'Unassigned';
-                aCounts[assignee] = (aCounts[assignee] || 0) + 1;
-            });
-            const priorityParent = document.getElementById('priorityChart').parentNode;
-            priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
-            new Chart(document.getElementById('priorityChart'), {
-                type: 'doughnut', 
-                data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#7c3aed'] }] }, 
-                options: { maintainAspectRatio: false, animation: { duration: 800, easing: 'easeOutQuart' } }
-            });
-            
-            // SORT ASSIGNEES (High to Low)
-            const sortedAssignees = Object.entries(aCounts).sort((a, b) => b[1] - a[1]);
-            const labelsSorted = sortedAssignees.map(item => item[0]);
-            const dataSorted = sortedAssignees.map(item => item[1]);
-
-            const assignParent = document.getElementById('assigneeChart').parentNode;
-            assignParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
-            const barColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-            new Chart(document.getElementById('assigneeChart'), {
-                type: 'bar',
-                data: { labels: labelsSorted, datasets: [{ label: 'Tasks', data: dataSorted, backgroundColor: barColors, borderRadius: 4 }] },
-                options: { maintainAspectRatio: false, animation: { duration: 800, easing: 'easeOutQuart' }, plugins: { legend: { display: false } } }
-            });
-        }
-
-        // --- UPDATED: REMOVED STATIC REPORTERS ---
-        function populateFilters() {
-            const modules = new Set(allData.map(d => d.module));
-            const priorities = new Set(allData.map(d => d.priority));
-            const reported = new Set(allData.map(d => d.reported).filter(r => r && r.trim() !== ""));
-            const assignees = new Set(allData.map(d => d.assign));
-            
-            fillSelect('filter-module', modules);
-            fillSelect('filter-priority', priorities);
-            fillSelect('filter-reported', reported);
-            fillSelect('filter-assignee', assignees);
-            
-            const modSelect = document.getElementById('modal-module');
-            modSelect.innerHTML = '<option value="">Select Module</option>';
-            ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
-            
-            const priSelect = document.getElementById('modal-priority');
-            priSelect.innerHTML = '<option value="">Select Priority</option>';
-            ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
-            
-            // --- FIX: Only Real Data for Reported By ---
-            const repSelect = document.getElementById('modal-reporter');
-            repSelect.innerHTML = '<option value="">Select Reporter</option>';
-            Array.from(reported).sort().forEach(r => {
-                repSelect.innerHTML += `<option value="${r}">${r}</option>`;
-            });
-        }
-        
-        function fillSelect(id, set) { const el = document.getElementById(id); el.innerHTML = '<option value="">All</option>'; set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; }); }
         function applyFilters() {
-            const filters = { module: document.getElementById('filter-module').value, priority: document.getElementById('filter-priority').value, reported: document.getElementById('filter-reported').value, assignee: document.getElementById('filter-assignee').value, search: document.getElementById('global-search').value.toLowerCase() };
-            filteredData = allData.filter(d => {
+            const filters = {
+                module: document.getElementById('filter-module').value,
+                priority: document.getElementById('filter-priority').value,
+                reported: document.getElementById('filter-reported').value,
+                assignee: document.getElementById('filter-assignee').value,
+                search: document.getElementById('global-search').value.toLowerCase(),
+                start: document.getElementById('date-start').value,
+                end: document.getElementById('date-end').value
+            };
+
+            // 1. First Filter by Date & Criteria (Independent of Status Card)
+            dateFilteredData = allData.filter(d => {
+                const matchesSearch = String(d.id).includes(filters.search) || 
+                                      String(d.description).toLowerCase().includes(filters.search) || 
+                                      String(d.module).toLowerCase().includes(filters.search) || 
+                                      String(d.reported).toLowerCase().includes(filters.search);
+                
+                let dateMatch = true;
+                if (filters.start || filters.end) {
+                    if (d.date) {
+                        const itemDateStr = d.date.substring(0, 10); 
+                        if (filters.start && itemDateStr < filters.start) dateMatch = false;
+                        if (filters.end && itemDateStr > filters.end) dateMatch = false;
+                    } else {
+                        dateMatch = false;
+                    }
+                }
+
+                return matchesSearch && dateMatch &&
+                       (!filters.module || d.module === filters.module) &&
+                       (!filters.priority || d.priority === filters.priority) &&
+                       (!filters.reported || d.reported === filters.reported) &&
+                       (!filters.assignee || d.assign === filters.assignee);
+            });
+
+            // 2. Update Header Stats from this base data
+            updateHeaderStats(dateFilteredData);
+
+            // 3. Now apply Status Filter for Table/Charts
+            filteredData = dateFilteredData.filter(d => {
                 let statusMatch = true;
                 if(currentStatusFilter !== 'Total') {
-                    const s = (d.status || "").toLowerCase();
+                    const s = String(d.status || "").toLowerCase().trim();
                     if(currentStatusFilter === 'Pending') statusMatch = s === 'pending';
                     else if(currentStatusFilter === 'Done') statusMatch = s === 'done';
                     else statusMatch = (s !== 'pending' && s !== 'done');
                 }
-                const matchesSearch = d.id.toString().includes(filters.search) || d.description.toLowerCase().includes(filters.search) || d.module.toLowerCase().includes(filters.search) || (d.reported && d.reported.toLowerCase().includes(filters.search));
-                return statusMatch && matchesSearch && (!filters.module || d.module === filters.module) && (!filters.priority || d.priority === filters.priority) && (!filters.reported || d.reported === filters.reported) && (!filters.assignee || d.assign === filters.assignee);
+                return statusMatch;
             });
-            currentPage = 1; renderTable(); renderCharts();
+
+            currentPage = 1; 
+            renderTable(); 
+            renderCharts(); 
+            renderTrendChart();
         }
-        function filterByStatus(status) { currentStatusFilter = status; applyFilters(); }
+
+        function updateHeaderStats(dataSet) {
+            let counts = { Total: 0, Pending: 0, Done: 0, Other: 0 };
+            dataSet.forEach(d => {
+                counts.Total++;
+                const s = String(d.status || "").toLowerCase().trim();
+                if(s === 'pending') counts.Pending++; 
+                else if(s === 'done') counts.Done++; 
+                else counts.Other++;
+            });
+            document.getElementById('count-total').innerText = counts.Total;
+            document.getElementById('count-pending').innerText = counts.Pending;
+            document.getElementById('count-done').innerText = counts.Done;
+            document.getElementById('count-other').innerText = counts.Other;
+
+            ['Total', 'Pending', 'Done', 'Other'].forEach(c => {
+                const el = document.getElementById(`card-${c}`);
+                if (currentStatusFilter === c) {
+                     el.classList.add('ring-2', c === 'Total' ? 'ring-gray-400' : (c === 'Pending' ? 'ring-yellow-400' : (c === 'Done' ? 'ring-emerald-400' : 'ring-purple-400')));
+                } else {
+                     el.classList.remove('ring-2', 'ring-gray-400', 'ring-yellow-400', 'ring-emerald-400', 'ring-purple-400');
+                }
+            });
+        }
+
+        function filterByStatus(status) { 
+            currentStatusFilter = status; 
+            applyFilters(); 
+        }
+        
+        function renderTrendChart() {
+            const canvas = document.getElementById('trendChart'); if(!canvas) return; const ctx = canvas.getContext('2d');
+            let labels = [], totalData = [], doneData = [], xLabel = "(Daily)";
+            
+            const dataToChart = filteredData; 
+
+            if (isTodayFilter) {
+                xLabel = "(Hourly Breakdown)";
+                const hoursMap = {};
+                for(let i=0; i<24; i++) {
+                    const h = i.toString().padStart(2, '0') + ":00";
+                    hoursMap[h] = { t: 0, d: 0 };
+                }
+                
+                dataToChart.forEach(d => {
+                   if(!d.date) return;
+                   try {
+                       const timePart = d.date.split(' ')[1]; 
+                       const hourStr = timePart.split(':')[0]; 
+                       const key = hourStr + ":00";
+                       if(hoursMap[key]) {
+                           hoursMap[key].t++;
+                           if(String(d.status).toLowerCase() === 'done') hoursMap[key].d++;
+                       }
+                   } catch(e) {}
+                });
+                
+                labels = Object.keys(hoursMap).sort();
+                totalData = labels.map(k => hoursMap[k].t);
+                doneData = labels.map(k => hoursMap[k].d);
+            } else {
+                const dateMap = {};
+                dataToChart.forEach(d => { 
+                    if(!d.date) return; 
+                    const dateKey = d.date.substring(0, 10); 
+                    if(!dateMap[dateKey]) dateMap[dateKey] = {t:0, d:0}; 
+                    dateMap[dateKey].t++; 
+                    if(String(d.status).toLowerCase()==='done') dateMap[dateKey].d++; 
+                });
+                labels = Object.keys(dateMap).sort();
+                totalData = labels.map(k=>dateMap[k].t);
+                doneData = labels.map(k=>dateMap[k].d);
+            }
+
+            document.getElementById('trend-label').innerText = xLabel;
+            if(window.trendC) window.trendC.destroy();
+            window.trendC = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{label:'Reported', data:totalData, borderColor:'#6366f1', backgroundColor:'rgba(99, 102, 241, 0.1)', tension:0.3, fill:true}, {label:'Done', data:doneData, borderColor:'#10b981', backgroundColor:'rgba(16, 185, 129, 0.1)', tension:0.3, fill:true}] }, options: { responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true, ticks:{stepSize:1}}} } });
+        }
+
+        function renderCharts() {
+            const pCounts = {}; const aCounts = {};
+            filteredData.forEach(d => { pCounts[d.priority||"Unknown"]=(pCounts[d.priority]||0)+1; const a=d.assign||"Unassigned"; aCounts[a]=(aCounts[a]||0)+1; });
+            const priorityParent = document.getElementById('priorityChart').parentNode; priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
+            new Chart(document.getElementById('priorityChart'), { type: 'doughnut', data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#6366f1'] }] }, options: { maintainAspectRatio: false } });
+            
+            const sortedAssignees = Object.entries(aCounts).sort((a,b)=>b[1]-a[1]);
+            const labelsSorted = sortedAssignees.map(item => item[0]); const dataSorted = sortedAssignees.map(item => item[1]);
+            const assignParent = document.getElementById('assigneeChart').parentNode; assignParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
+            const barColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+            new Chart(document.getElementById('assigneeChart'), { type: 'bar', data: { labels: labelsSorted, datasets: [{ label: 'Tasks', data: dataSorted, backgroundColor: barColors, borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: {display:false} } } });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
+            if(filteredData.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">No issues found matching criteria</td></tr>'; return; }
+            const start = (currentPage - 1) * rowsPerPage;
+            const pageData = filteredData.slice(start, start + rowsPerPage);
+            document.getElementById('pagination-info').innerText = `Showing ${start+1}-${Math.min(start+rowsPerPage, filteredData.length)} of ${filteredData.length}`;
+
+            // Unique Statuses for Dropdown + Standard Options
+            const uniqueStatuses = new Set(allData.map(d => d.status).filter(s => s && s.trim()));
+            ['Pending', 'In Progress', 'Done', 'Dropped'].forEach(s => uniqueStatuses.add(s));
+            const statusOptions = Array.from(uniqueStatuses).sort();
+            
+            pageData.forEach(row => {
+                let linkHtml = '<span class="text-slate-300 text-[10px]">None</span>';
+                if(row.link) {
+                    const isDrive = row.link.includes('drive.google.com');
+                    const icon = isDrive ? '<i class="fa-brands fa-google-drive text-green-600"></i>' : '<i class="fa-solid fa-link text-blue-500"></i>';
+                    const text = isDrive ? 'Drive' : 'Link';
+                    linkHtml = `<a href="${row.link}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-200 rounded-full hover:shadow-sm hover:border-indigo-300 transition text-[10px] font-semibold text-slate-600 no-underline">${icon} ${text}</a>`;
+                }
+
+                let pColor = 'bg-slate-100 text-slate-600';
+                if(row.priority === 'High') pColor = 'bg-rose-50 text-rose-600 border border-rose-100';
+                else if(row.priority === 'Medium') pColor = 'bg-amber-50 text-amber-600 border border-amber-100';
+                else if(row.priority === 'Low') pColor = 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+
+                // Status Dropdown
+                let statusHtml = `<select onchange="updateStatus('${row.id}', '${row.rowIndex}', this.value)" class="bg-transparent text-[10px] font-bold uppercase cursor-pointer border-none focus:ring-0 p-0 pr-4 w-24 truncate text-slate-600 hover:text-indigo-600 transition">`;
+                if(!row.status) statusHtml += `<option value="" selected>--</option>`;
+                statusOptions.forEach(s => {
+                    statusHtml += `<option value="${s}" ${row.status === s ? 'selected' : ''}>${s}</option>`;
+                });
+                statusHtml += `</select>`;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-50 hover:bg-indigo-50/30 transition duration-150 group">
+                        <td class="p-3 font-mono font-bold text-slate-500 text-[10px]">#${row.id}</td>
+                        <td class="p-3"><span class="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-[10px] font-bold">${row.module}</span></td>
+                        <td class="p-3 text-[10px] text-slate-500 whitespace-nowrap">${row.date}</td>
+                        <td class="p-3 text-slate-700 text-xs leading-snug min-w-[200px]">${row.description}</td>
+                        <td class="p-3">${linkHtml}</td>
+                        <td class="p-3"><span class="${pColor} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${row.priority}</span></td>
+                        <td class="p-3"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">${row.assign.charAt(0)}</div><span class="text-xs font-medium text-slate-600">${row.assign}</span></div></td>
+                        <td class="p-3"><div class="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded border border-slate-100 group-hover:border-indigo-200 transition"><i class="fa-solid fa-circle text-[6px] text-indigo-400"></i>${statusHtml}</div></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- Other Functions (Standard) ---
+        function populateFilters() {
+            const modules = new Set(allData.map(d => d.module)); const priorities = new Set(allData.map(d => d.priority)); const reported = new Set(allData.map(d => d.reported).filter(r => r && r.trim() !== "")); const assignees = new Set(allData.map(d => d.assign));
+            fillSelect('filter-module', modules); fillSelect('filter-priority', priorities); fillSelect('filter-reported', reported); fillSelect('filter-assignee', assignees);
+            const modSelect = document.getElementById('modal-module'); modSelect.innerHTML = '<option value="">Select Module</option>'; ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
+            const priSelect = document.getElementById('modal-priority'); priSelect.innerHTML = '<option value="">Select Priority</option>'; ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
+            const repSelect = document.getElementById('modal-reporter'); repSelect.innerHTML = '<option value="">Select Reporter</option>'; Array.from(reported).sort().forEach(r => { repSelect.innerHTML += `<option value="${r}">${r}</option>`; });
+        }
+        function fillSelect(id, set) { const el = document.getElementById(id); el.innerHTML = '<option value="">All</option>'; set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; }); }
         function calculateNextId() { if (allData.length === 0) return 1001; const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id)); const maxId = ids.length > 0 ? Math.max(...ids) : 1000; return maxId + 1; }
-        function openModal() { const modal = document.getElementById('issueModal'); modal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); document.getElementById('modal-id').value = calculateNextId(); populateFilters(); }
-        function closeModal() { document.getElementById('issueModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); document.getElementById('issueForm').reset(); document.getElementById('upload-progress-container').classList.add('hidden'); document.getElementById('upload-status-text').classList.add('hidden'); document.getElementById('file-name-display').innerText = "No file chosen"; document.getElementById('file-name-display').classList.remove('text-blue-600', 'font-semibold'); }
-        function updateFileName() { const fileInput = document.getElementById('modal-file'); const display = document.getElementById('file-name-display'); if (fileInput.files.length > 0) { display.innerText = fileInput.files[0].name; display.classList.add('text-blue-600', 'font-semibold'); } else { display.innerText = "No file chosen"; display.classList.remove('text-blue-600', 'font-semibold'); } }
+        function openModal() { document.getElementById('issueModal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); document.getElementById('modal-id').value = calculateNextId(); populateFilters(); }
+        function closeModal() { document.getElementById('issueModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); document.getElementById('issueForm').reset(); document.getElementById('upload-progress-container').classList.add('hidden'); document.getElementById('upload-status-text').classList.add('hidden'); document.getElementById('file-name-display').innerText = "No file chosen"; }
+        function updateFileName() { const fileInput = document.getElementById('modal-file'); const display = document.getElementById('file-name-display'); if (fileInput.files.length > 0) display.innerText = fileInput.files[0].name; else display.innerText = "No file chosen"; }
         async function submitIssue(e) {
-            e.preventDefault(); const btn = document.getElementById('submit-btn'); const fileInput = document.getElementById('modal-file'); let finalLink = document.getElementById('modal-link').value; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            e.preventDefault(); const btn = document.getElementById('submit-btn'); const fileInput = document.getElementById('modal-file'); let finalLink = document.getElementById('modal-link').value; btn.disabled = true; btn.innerText = "Processing...";
             try {
                 if (fileInput.files.length > 0) {
-                    document.getElementById('upload-status-text').innerText = "Authorizing..."; document.getElementById('upload-status-text').classList.remove('hidden');
                     const tokenRes = await fetch(SCRIPT_URL + "?action=getToken"); const tokenData = await tokenRes.json();
-                    if(!tokenData.token) throw new Error("Token Error");
-                    const file = fileInput.files[0]; document.getElementById('upload-progress-container').classList.remove('hidden');
-                    const metadata = { name: file.name, mimeType: file.type, parents: [DRIVE_FOLDER_ID] };
+                    document.getElementById('upload-progress-container').classList.remove('hidden');
+                    const metadata = { name: fileInput.files[0].name, mimeType: fileInput.files[0].type, parents: [DRIVE_FOLDER_ID] };
                     const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json' }, body: JSON.stringify(metadata) });
                     if(!initRes.ok) throw new Error("Upload Init Failed");
                     const locationUrl = initRes.headers.get('Location');
-                    const uploadedFile = await new Promise((resolve, reject) => { const xhr = new XMLHttpRequest(); xhr.open('PUT', locationUrl, true); xhr.upload.onprogress = (e) => { if (e.lengthComputable) { const percent = Math.round((e.loaded / e.total) * 100); document.getElementById('upload-progress-bar').style.width = percent + "%"; document.getElementById('upload-status-text').innerText = `Uploading: ${percent}%`; } }; xhr.onload = () => { if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText)); else reject("Upload Failed"); }; xhr.onerror = () => reject("Network Error"); xhr.send(file); });
+                    const uploadedFile = await new Promise((resolve, reject) => { const xhr = new XMLHttpRequest(); xhr.open('PUT', locationUrl, true); xhr.onload = () => { if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText)); else reject("Upload Failed"); }; xhr.send(fileInput.files[0]); });
                     finalLink = `https://drive.google.com/file/d/${uploadedFile.id}/view`;
                 }
-                document.getElementById('upload-status-text').innerText = "Saving to Sheet...";
                 const formData = { action: "submit", module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink };
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) });
                 const result = await res.json();
-                if(result.status === 'success') { alert("Success! Issue #" + result.id + " Created."); closeModal(); fetchData(); } else { throw new Error("Sheet Save Failed"); }
-            } catch (err) { alert("Error: " + err.message); } finally { btn.disabled = false; btn.innerText = "Submit Issue"; }
+                if(result.status === 'success') { alert("Saved!"); closeModal(); fetchData(); } else { throw new Error(result.message); }
+            } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.innerText = "Submit"; }
         }
-        function openAssignSelector() { const reporters = new Set(allData.map(d => d.reported).filter(r => r)); const select = document.getElementById('assign-reporter-select'); select.innerHTML = '<option value="">Select a person...</option>'; reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`); document.getElementById('assignSelectorModal').classList.remove('hidden'); }
+
+        function openAssignSelector() { const reporters = new Set(allData.map(d => d.reported).filter(r => r)); const select = document.getElementById('assign-reporter-select'); select.innerHTML = '<option value="">Select...</option>'; reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`); document.getElementById('assignSelectorModal').classList.remove('hidden'); }
         function closeAssignSelector() { document.getElementById('assignSelectorModal').classList.add('hidden'); }
         function startAssignment() {
             const reporter = document.getElementById('assign-reporter-select').value;
-            if(!reporter) { alert("Please select a reporter"); return; }
+            if(!reporter) { alert("Select a reporter"); return; }
             assignableIssues = allData.filter(d => d.reported === reporter && (!d.assign || d.assign === "Unassigned" || d.assign.trim() === ""));
-            if(assignableIssues.length === 0) { alert("No pending/unassigned issues found for " + reporter); return; }
-            document.getElementById('assign-reporter-name').innerText = reporter; currentAssignIndex = 0; populateAssignDropdowns(); closeAssignSelector(); document.getElementById('assignModal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); loadAssignIssue();
+            if(assignableIssues.length === 0) { alert("No issues found"); return; }
+            document.getElementById('assign-reporter-name').innerText = reporter; currentAssignIndex = 0;
+            const devList = document.getElementById('developers-list'); devList.innerHTML = '';
+            const assignees = new Set(allData.map(d => d.assign)); assignees.forEach(d => { if(d && d !== 'Unassigned') devList.innerHTML += `<option value="${d}">`; });
+            closeAssignSelector(); document.getElementById('assignModal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); loadAssignIssue();
         }
-        function populateAssignDropdowns() { const developers = new Set(allData.map(d => d.assign).filter(a => a && a !== 'Unassigned' && a.trim() !== '')); const devList = document.getElementById('developers-list'); devList.innerHTML = ''; developers.forEach(dev => devList.innerHTML += `<option value="${dev}">`); }
         function loadAssignIssue() {
-            if (currentAssignIndex >= assignableIssues.length) { alert("All issues for this reporter have been reviewed!"); closeAssignModal(); return; }
+            if (currentAssignIndex >= assignableIssues.length) { alert("Done!"); closeAssignModal(); return; }
             const issue = assignableIssues[currentAssignIndex];
-            document.getElementById('assign-id').value = issue.id; document.getElementById('assign-date').value = issue.date; document.getElementById('assign-module').value = issue.module || "Employer"; document.getElementById('assign-priority').value = issue.priority || "Medium"; document.getElementById('assign-desc').value = issue.description; document.getElementById('assign-row-index').value = issue.rowIndex; document.getElementById('assign-dev').value = ""; 
-            const linkContainer = document.getElementById('assign-link-container');
-            if (issue.link) { const isDrive = issue.link.includes('drive.google.com'); linkContainer.innerHTML = `<a href="${issue.link}" target="_blank" class="text-blue-600 flex items-center gap-1 font-semibold hover:underline">${isDrive ? '<i class="fa-brands fa-google-drive"></i> Open Drive File' : '<i class="fa-solid fa-link"></i> Open Link'}</a>`; } else { linkContainer.innerHTML = '<span class="text-gray-400 italic text-sm">No attachment</span>'; }
+            document.getElementById('assign-id').value = issue.id; document.getElementById('assign-date').value = issue.date; document.getElementById('assign-module').value = issue.module; document.getElementById('assign-priority').value = issue.priority; document.getElementById('assign-desc').value = issue.description; document.getElementById('assign-row-index').value = issue.rowIndex; document.getElementById('assign-dev').value = ""; 
+            const linkDiv = document.getElementById('assign-link-container'); linkDiv.innerHTML = issue.link ? `<a href="${issue.link}" target="_blank" class="text-blue-600 text-xs">View File</a>` : '<span class="text-gray-400 text-xs">None</span>';
         }
         async function submitAssignment(e) {
-            e.preventDefault(); const btn = document.getElementById('assign-submit-btn'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            e.preventDefault(); const btn = document.getElementById('assign-submit-btn'); btn.disabled = true; btn.innerText = 'Saving...';
             const payload = { action: "update", notificationType: "assign", rowIndex: document.getElementById('assign-row-index').value, id: document.getElementById('assign-id').value, module: document.getElementById('assign-module').value, priority: document.getElementById('assign-priority').value, description: document.getElementById('assign-desc').value, assignee: document.getElementById('assign-dev').value };
-            try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await res.json(); if(result.status === 'success') { const target = assignableIssues[currentAssignIndex]; target.description = payload.description; target.assign = payload.assignee; currentAssignIndex++; loadAssignIssue(); } else { throw new Error(result.message); } } catch (err) { alert("Update Failed: " + err.message); } finally { btn.disabled = false; btn.innerText = "Assign & Save"; }
+            try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await res.json(); if(result.status === 'success') { const t = assignableIssues[currentAssignIndex]; t.description = payload.description; t.assign = payload.assignee; currentAssignIndex++; loadAssignIssue(); } } catch(err) { alert("Error"); } finally { btn.disabled = false; btn.innerText = "Assign & Save"; }
         }
         function skipAssignment() { currentAssignIndex++; loadAssignIssue(); }
-        function closeAssignModal() { document.getElementById('assignModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); renderTable(); renderCharts(); }
+        function closeAssignModal() { document.getElementById('assignModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); fetchData(); }
+        
+        async function updateStatus(id, rowIndex, newStatus) {
+            const item = allData.find(d => d.id == id);
+            const payload = { action: "update", notificationType: "status", rowIndex, id, status: newStatus, module: item.module, priority: item.priority, reported: item.reported, description: item.description };
+            try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); await res.json(); item.status = newStatus; updateDashboard(); } catch(e) { alert("Update failed"); }
+        }
     </script>
 </body>
 </html>

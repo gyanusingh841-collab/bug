@@ -26,7 +26,7 @@
         <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fa-solid fa-bug text-red-600 text-2xl mr-3"></i>
-                <h1 class="text-xl font-bold">TalentWale <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
+                <h1 class="text-xl font-bold">Bug Tracker Pro <span class="text-xs font-normal text-green-600 ml-2 border border-green-200 bg-green-50 px-2 py-1 rounded-full" id="connection-status">Connecting...</span></h1>
             </div>
             <div class="flex gap-3">
                 <button onclick="openAssignSelector()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-md transition transform hover:scale-105">
@@ -274,6 +274,7 @@
     </div>
 
     <script>
+        // NEW URL UPDATE HERE:
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEh3NbEnMXcFJUnhcfPPPP7_KURFIVVevfvuOG5zJO47JPssDtya7w1tBqySI2d0nnKQ/exec"; 
         const DRIVE_FOLDER_ID = "10rRpA0Kp1SKgI2Fk__oS9zXTiap0VTT9";
 
@@ -489,6 +490,7 @@
                 options: { maintainAspectRatio: false, animation: { duration: 800, easing: 'easeOutQuart' } }
             });
             
+            // SORT ASSIGNEES (High to Low)
             const sortedAssignees = Object.entries(aCounts).sort((a, b) => b[1] - a[1]);
             const labelsSorted = sortedAssignees.map(item => item[0]);
             const dataSorted = sortedAssignees.map(item => item[1]);
@@ -541,7 +543,20 @@
         function filterByStatus(status) { currentStatusFilter = status; applyFilters(); }
         function calculateNextId() { if (allData.length === 0) return 1001; const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id)); const maxId = ids.length > 0 ? Math.max(...ids) : 1000; return maxId + 1; }
         function openModal() { const modal = document.getElementById('issueModal'); modal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); document.getElementById('modal-id').value = calculateNextId(); populateFilters(); }
-        function closeModal() { document.getElementById('issueModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+        function closeModal() {
+            // Reset the form fields inside the modal
+            document.getElementById('issueForm').reset();
+            
+            // Reset custom UI elements
+            document.getElementById('file-name-display').innerText = "No file chosen";
+            document.getElementById('file-name-display').classList.remove('text-blue-600', 'font-semibold');
+            document.getElementById('upload-progress-container').classList.add('hidden');
+            document.getElementById('upload-status-text').classList.add('hidden');
+            
+            // Hide modal and restore scroll
+            document.getElementById('issueModal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
         function updateFileName() { const fileInput = document.getElementById('modal-file'); const display = document.getElementById('file-name-display'); if (fileInput.files.length > 0) { display.innerText = fileInput.files[0].name; display.classList.add('text-blue-600', 'font-semibold'); } else { display.innerText = "No file chosen"; display.classList.remove('text-blue-600', 'font-semibold'); } }
         async function submitIssue(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); const fileInput = document.getElementById('modal-file'); let finalLink = document.getElementById('modal-link').value; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';

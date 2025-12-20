@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bug Tracker Dashboard</title>
+    <title>TalentWale Dashboard</title>
+    <script src="script.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
-        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); }
-        .loader { border-top-color: #3b82f6; -webkit-animation: spinner 1.0s linear infinite; animation: spinner 1.0s linear infinite; }
+        body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; }
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        .loader { border-top-color: #4f46e5; -webkit-animation: spinner 0.8s linear infinite; animation: spinner 0.8s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(0.5); }
         .modal-scroll { scroll-behavior: smooth; }
@@ -23,25 +25,28 @@
 <body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-700">
 
     <!-- Navbar -->
-    <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 fixed w-full z-50 top-0 left-0">
+    <nav class="glass-nav fixed w-full z-50 top-0 left-0 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row justify-between items-center py-3 sm:h-16 space-y-3 sm:space-y-0">
                 <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
                     <div class="flex items-center gap-2">
-                        <a href="https://tw-app-r-dev-cin-01.azurewebsites.net/" target="_blank">
+                        <a href="https://tw-app-r-dev-cin-01.azurewebsites.net/" target="_blank" class="opacity-90 hover:opacity-100 transition">
                             <img src="talentwale-logo.png" width="218px" height="27px" alt="Talentwale Logo">
                         </a>
                     </div>
-                    <span class="ml-auto sm:ml-4 text-[10px] sm:text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5" id="connection-status">
+                    <span class="ml-auto sm:ml-6 text-[10px] sm:text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full flex items-center gap-2 shadow-sm" id="connection-status">
                         <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
                         Connecting...
                     </span>
                 </div>
                 <div class="flex w-full sm:w-auto justify-center gap-3">
-                    <button onclick="openAssignSelector()" class="flex-1 sm:flex-none justify-center bg-white border border-gray-300 hover:bg-gray-50 text-slate-700 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow-sm">
-                        <i class="fa-solid fa-user-check text-indigo-500"></i> Assign
+                    <button onclick="openAssignSelector()" class="flex-1 sm:flex-none justify-center bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-600 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow-sm">
+                        <i class="fa-solid fa-user-check text-indigo-500"></i> <span class="hidden sm:inline">Assign</span>
                     </button>
-                    <button onclick="openModal()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-md shadow-indigo-200 transition transform active:scale-95">
+                    <button onclick="openStatusSelector()" class="flex-1 sm:flex-none justify-center bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-600 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow-sm">
+                        <i class="fa-solid fa-list-check text-emerald-500"></i> <span class="hidden sm:inline">Status</span>
+                    </button>
+                    <button onclick="openModal()" class="flex-1 sm:flex-none justify-center bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-200 transition transform active:scale-95">
                         <i class="fa-solid fa-plus"></i> Report Issue
                     </button>
                 </div>
@@ -52,26 +57,26 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[140px] sm:pt-28 pb-12">
         <div id="loader" class="flex flex-col justify-center items-center py-32">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-            <p class="text-slate-400 text-sm font-medium">Fetching Issues...</p>
+            <div class="loader ease-linear rounded-full border-[3px] border-t-[3px] border-slate-200 h-10 w-10 mb-4"></div>
+            <p class="text-slate-400 text-xs font-semibold tracking-wide uppercase">Loading Dashboard...</p>
         </div>
 
         <div id="dashboard-content" class="hidden space-y-6">
             <!-- Date Filter -->
-            <div class="bg-white rounded-xl border border-gray-200 p-1 sm:p-2 shadow-sm">
+            <div class="bg-white rounded-2xl border border-gray-100 p-1 sm:p-2 shadow-sm">
                 <div class="flex flex-col lg:flex-row items-center justify-between gap-4 p-3">
                     <div class="flex items-center gap-3 w-full lg:w-auto border-b lg:border-b-0 pb-3 lg:pb-0 border-gray-100">
-                        <div class="bg-blue-50 p-2 rounded-lg text-blue-600">
-                            <i class="fa-regular fa-calendar-days text-lg"></i>
+                        <div class="bg-indigo-50 p-2.5 rounded-xl text-indigo-600">
+                            <i class="fa-regular fa-calendar-days text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-slate-800">Time Period</h3>
-                            <p class="text-xs text-slate-500">Filter data by date range</p>
+                            <h3 class="text-sm font-bold text-slate-800">Date Filter</h3>
+                            <p class="text-[11px] text-slate-500 font-medium">Select a range to analyze</p>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center">
                         <div class="relative w-full sm:w-40">
-                            <select id="date-preset" onchange="applyDatePreset()" class="w-full appearance-none bg-gray-50 border border-gray-200 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-8 font-medium cursor-pointer hover:bg-gray-100 transition">
+                            <select id="date-preset" onchange="applyDatePreset()" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 font-semibold cursor-pointer hover:bg-slate-100 transition">
                                 <option value="all">All Time</option>
                                 <option value="today">Today</option>
                                 <option value="week">This Week</option>
@@ -91,32 +96,40 @@
 
             <!-- Header Cards -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div onclick="filterByStatus('Total')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-indigo-100" id="card-Total">
-                    <div class="absolute right-0 top-0 h-full w-1 bg-gray-800 group-hover:w-2 transition-all"></div>
-                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Issues</p>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800" id="count-total">0</h2>
+                <div onclick="filterByStatus('Total')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden" id="card-Total">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-[11px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider">Total Issues</p>
+                        <div class="p-1.5 bg-slate-50 rounded-lg text-slate-400 group-hover:text-slate-600 transition"><i class="fa-solid fa-layer-group"></i></div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800" id="count-total">0</h2>
                 </div>
-                <div onclick="filterByStatus('Pending')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-yellow-100" id="card-Pending">
-                    <div class="absolute right-0 top-0 h-full w-1 bg-yellow-500 group-hover:w-2 transition-all"></div>
-                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending</p>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-yellow-600" id="count-pending">0</h2>
+                <div onclick="filterByStatus('Pending')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden" id="card-Pending">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-[11px] sm:text-xs text-amber-500/80 font-bold uppercase tracking-wider">Pending</p>
+                        <div class="p-1.5 bg-amber-50 rounded-lg text-amber-500"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-amber-500" id="count-pending">0</h2>
                 </div>
-                <div onclick="filterByStatus('Done')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-emerald-100" id="card-Done">
-                    <div class="absolute right-0 top-0 h-full w-1 bg-emerald-500 group-hover:w-2 transition-all"></div>
-                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Resolved</p>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-emerald-600" id="count-done">0</h2>
+                <div onclick="filterByStatus('Done')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden" id="card-Done">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-[11px] sm:text-xs text-emerald-500/80 font-bold uppercase tracking-wider">Resolved</p>
+                        <div class="p-1.5 bg-emerald-50 rounded-lg text-emerald-500"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-emerald-500" id="count-done">0</h2>
                 </div>
-                <div onclick="filterByStatus('Other')" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden ring-2 ring-transparent hover:ring-purple-100" id="card-Other">
-                    <div class="absolute right-0 top-0 h-full w-1 bg-purple-500 group-hover:w-2 transition-all"></div>
-                    <p class="text-[11px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Others</p>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-purple-600" id="count-other">0</h2>
+                <div onclick="filterByStatus('Other')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition cursor-pointer group relative overflow-hidden" id="card-Other">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-[11px] sm:text-xs text-indigo-500/80 font-bold uppercase tracking-wider">Others</p>
+                        <div class="p-1.5 bg-indigo-50 rounded-lg text-indigo-500"><i class="fa-solid fa-chart-pie"></i></div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-indigo-500" id="count-other">0</h2>
                 </div>
             </div>
 
             <!-- TREND CHART -->
-            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm sm:text-base border-b pb-3">
-                    <span class="bg-blue-100 text-blue-600 p-1.5 rounded-md"><i class="fa-solid fa-arrow-trend-up"></i></span>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2 text-sm sm:text-base">
+                    <span class="bg-indigo-50 text-indigo-600 p-2 rounded-lg"><i class="fa-solid fa-arrow-trend-up"></i></span>
                     Activity Trend <span class="text-xs font-normal text-gray-400 ml-auto" id="trend-label">(Daily)</span>
                 </h3>
                 <div class="h-64"><canvas id="trendChart"></canvas></div>
@@ -124,65 +137,65 @@
 
             <!-- Existing Charts -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                    <h3 class="font-bold text-slate-800 mb-4 text-sm sm:text-base border-b pb-3">Priority Distribution</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm sm:text-base">Priority Distribution</h3>
                     <div class="h-56"><canvas id="priorityChart"></canvas></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                    <h3 class="font-bold text-slate-800 mb-4 text-sm sm:text-base border-b pb-3">Assignee Workload</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm sm:text-base">Assignee Workload</h3>
                     <div class="h-56"><canvas id="assigneeChart"></canvas></div>
                 </div>
             </div>
 
             <!-- Advanced Filters -->
-            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                <div class="flex items-center gap-2 mb-4 border-b pb-3">
-                    <span class="bg-indigo-100 text-indigo-600 p-1.5 rounded-md"><i class="fa-solid fa-filter text-sm"></i></span>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex items-center gap-2 mb-5">
+                    <span class="bg-indigo-50 text-indigo-600 p-2 rounded-lg"><i class="fa-solid fa-filter text-sm"></i></span>
                     <h3 class="text-sm sm:text-base font-bold text-slate-800">Advanced Search</h3>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div class="md:col-span-1">
-                        <label class="block text-[15px] font-bold text-slate-500 uppercase mb-1.5">Keyword</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Keyword</label>
                         <div class="relative">
-                            <input type="text" id="global-search" placeholder="Search any text..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 pl-9 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                            <input type="text" id="global-search" placeholder="Search..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 pl-9 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition font-medium">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i></div>
                         </div>
                     </div>
-                    <div><label class="block text-[15px] font-bold text-slate-500 uppercase mb-1.5">Module</label><select id="filter-module" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Modules</option></select></div>
-                    <div><label class="block text-[15px] font-bold text-slate-500 uppercase mb-1.5">Priority</label><select id="filter-priority" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Priorities</option></select></div>
-                    <div><label class="block text-[15px] font-bold text-slate-500 uppercase mb-1.5">Reported By</label><select id="filter-reported" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Reporters</option></select></div>
-                    <div><label class="block text-[15px] font-bold text-slate-500 uppercase mb-1.5">Assigned To</label><select id="filter-assignee" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500"><option value="">All Assignees</option></select></div>
+                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Module</label><select id="filter-module" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 font-medium text-slate-600"><option value="">All Modules</option></select></div>
+                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Priority</label><select id="filter-priority" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 font-medium text-slate-600"><option value="">All Priorities</option></select></div>
+                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Reported By</label><select id="filter-reported" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 font-medium text-slate-600"><option value="">All Reporters</option></select></div>
+                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Assigned To</label><select id="filter-assignee" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 font-medium text-slate-600"><option value="">All Assignees</option></select></div>
                 </div>
             </div>
 
             <!-- Table -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-gray-200 flex justify-between bg-gray-50/50 items-center">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-gray-100 flex justify-between items-center">
                     <h3 class="font-bold text-slate-800 text-sm">Issue Details</h3>
-                    <select id="rows-per-page" class="bg-white border border-gray-300 rounded-md p-1 px-2 text-xs font-medium text-slate-600 focus:ring-indigo-500"><option value="10">10 Rows</option><option value="30">30 Rows</option><option value="50">50 Rows</option><option value="100">100 Rows</option></select>
+                    <select id="rows-per-page" class="bg-slate-50 border border-slate-200 rounded-lg p-1.5 px-3 text-xs font-semibold text-slate-600 focus:ring-indigo-500 cursor-pointer"><option value="10">10 Rows</option><option value="30">30 Rows</option><option value="50">50 Rows</option><option value="100">100 Rows</option></select>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-100/80 uppercase text-[10px] font-bold text-slate-500 tracking-wider sticky top-0">
+                        <thead class="bg-slate-50/80 uppercase text-[10px] font-bold text-slate-400 tracking-wider sticky top-0 backdrop-blur-sm">
                             <tr>
-                                <th class="p-3 border-b w-[5%]">ID</th>
-                                <th class="p-3 border-b w-[10%]">Module</th>
-                                <th class="p-3 border-b w-[10%]">Date</th>
-                                <th class="p-3 border-b w-[30%]">Description</th>
-                                <th class="p-3 border-b w-[10%]">Attachment</th>
-                                <th class="p-3 border-b w-[10%]">Priority</th>
-                                <th class="p-3 border-b w-[10%]">Assign</th>
-                                <th class="p-3 border-b w-[15%]">Status</th>
+                                <th class="p-4 border-b border-gray-100 w-[5%]">ID</th>
+                                <th class="p-4 border-b border-gray-100 w-[10%]">Module</th>
+                                <th class="p-4 border-b border-gray-100 w-[10%]">Date</th>
+                                <th class="p-4 border-b border-gray-100 w-[35%]">Description</th>
+                                <th class="p-4 border-b border-gray-100 w-[10%]">Attachment</th>
+                                <th class="p-4 border-b border-gray-100 w-[10%]">Priority</th>
+                                <th class="p-4 border-b border-gray-100 w-[10%]">Assign</th>
+                                <th class="p-4 border-b border-gray-100 w-[10%]">Status</th>
                             </tr>
                         </thead>
                         <tbody id="table-body" class="divide-y divide-gray-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
-                <div class="p-3 border-t border-gray-200 flex justify-between bg-gray-50/50 items-center">
+                <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-slate-50/30">
                     <span id="pagination-info" class="text-[10px] sm:text-xs font-medium text-slate-500">Loading...</span>
                     <div class="flex gap-2">
-                        <button id="prev-btn" class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 text-xs font-medium text-slate-600 transition">Previous</button>
-                        <button id="next-btn" class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 text-xs font-medium text-slate-600 transition">Next</button>
+                        <button id="prev-btn" class="px-4 py-1.5 border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold text-slate-600 transition shadow-sm">Previous</button>
+                        <button id="next-btn" class="px-4 py-1.5 border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold text-slate-600 transition shadow-sm">Next</button>
                     </div>
                 </div>
             </div>
@@ -190,385 +203,14 @@
     </div>
 
     <!-- Modals -->
-    <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div><div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-5 relative z-10 transform transition-all scale-100 border border-gray-200 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll"><div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20"><h3 class="text-xl font-bold text-slate-800">Report Issue</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button></div><form id="issueForm" onsubmit="submitIssue(event)" class="space-y-4"><div class="mb-2"><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Issue ID</label><input type="text" id="modal-id" readonly class="w-full bg-slate-50 border border-slate-200 text-slate-700 font-bold p-2.5 rounded-lg"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><select id="modal-module" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"><option value="">Select</option></select></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><select id="modal-priority" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"><option value="">Select</option></select></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Reported By</label><select id="modal-reporter" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"><option value="">Select Reporter</option></select></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="modal-desc" required class="w-full border border-slate-300 p-2.5 rounded-lg h-24 text-sm resize-none"></textarea></div><div class="bg-slate-50 p-3 rounded-lg border border-slate-200"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Attachment</label><div class="flex flex-col gap-2"><input type="url" id="modal-link" placeholder="External Link (Optional)" class="w-full border border-slate-300 p-2 rounded text-xs"><div class="flex items-center gap-3"><label class="cursor-pointer bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-indigo-500"></i> Upload File<input type="file" id="modal-file" class="hidden" onchange="updateFileName()"></label><span id="file-name-display" class="text-xs text-slate-400 italic truncate">No file</span></div><div id="upload-progress-container" class="hidden w-full bg-slate-200 rounded-full h-1.5 mt-2"><div id="upload-progress-bar" class="bg-emerald-500 h-1.5 rounded-full w-0 transition-all duration-300"></div></div><p id="upload-status-text" class="text-[10px] text-emerald-600 font-bold hidden text-center mt-1">Uploading...</p></div></div><div class="flex justify-end gap-3 pt-2"><button type="button" onclick="closeModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancel</button><button type="submit" id="submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md text-sm font-medium">Submit</button></div></form></div></div>
+    <div id="issueModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div><div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] w-full sm:max-w-2xl p-6 relative z-10 transform transition-all scale-100 border border-white/50 ring-1 ring-white/50 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto modal-scroll"><div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-200/50 sticky top-0 bg-white/50 backdrop-blur-md z-20"><h3 class="text-xl font-bold text-slate-800">Report Issue</h3><button onclick="closeModal()" class="text-gray-500 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button></div><form id="issueForm" onsubmit="submitIssue(event)" class="space-y-4"><input type="hidden" id="modal-row-index"><div class="mb-2"><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Issue ID</label><input type="text" id="modal-id" oninput="lookupIssue(this.value)" class="w-full bg-white/50 border border-white/60 text-slate-700 font-bold p-2.5 rounded-lg shadow-sm"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><select id="modal-module" required class="w-full bg-white/50 border border-white/60 p-2.5 rounded-lg text-sm shadow-sm focus:bg-white/80"><option value="">Select</option></select></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><select id="modal-priority" required class="w-full bg-white/50 border border-white/60 p-2.5 rounded-lg text-sm shadow-sm focus:bg-white/80"><option value="">Select</option></select></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Reported By</label><select id="modal-reporter" required class="w-full bg-white/50 border border-white/60 p-2.5 rounded-lg text-sm shadow-sm focus:bg-white/80"><option value="">Select Reporter</option></select></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="modal-desc" required class="w-full bg-white/50 border border-white/60 p-2.5 rounded-lg h-24 text-sm resize-none shadow-sm focus:bg-white/80"></textarea></div><div class="bg-white/40 p-3 rounded-lg border border-white/50 shadow-inner"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Attachment</label><div class="flex flex-col gap-2"><input type="url" id="modal-link" placeholder="External Link (Optional)" class="w-full bg-white/60 border border-white/60 p-2 rounded text-xs shadow-sm"><div class="flex items-center gap-3"><label class="cursor-pointer bg-white/70 border border-white/60 hover:bg-white text-slate-700 px-3 py-1.5 rounded-md shadow-sm text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-cloud-arrow-up text-indigo-500"></i> Upload File<input type="file" id="modal-file" class="hidden" onchange="updateFileName()"></label><span id="file-name-display" class="text-xs text-slate-500 italic truncate">No file</span></div><div id="upload-progress-container" class="hidden mt-2"><div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1"><span>Uploading...</span><span id="upload-status-text">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden"><div id="upload-progress-bar" class="bg-indigo-500 h-full rounded-full w-0 transition-all duration-300 ease-out"></div></div></div></div></div><div class="flex justify-end gap-3 pt-2"><button type="button" onclick="closeModal()" class="px-4 py-2 text-slate-600 hover:bg-white/50 rounded-lg text-sm font-medium transition">Cancel</button><button type="submit" id="submit-btn" class="px-5 py-2 bg-indigo-600/90 hover:bg-indigo-700 text-white rounded-lg shadow-lg shadow-indigo-500/30 text-sm font-medium transition backdrop-blur-sm">Submit</button></div></form></div></div>
     
-    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="closeAssignSelector()"></div><div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative z-10 scale-100"><h3 class="text-lg font-bold text-slate-800 mb-4">Select Reporter</h3><select id="assign-reporter-select" class="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm mb-4"><option value="">Choose Name...</option></select><div class="flex justify-end gap-2"><button onclick="closeAssignSelector()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">Cancel</button><button onclick="startAssignment()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Next</button></div></div></div>
+    <div id="assignSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeAssignSelector()"></div><div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] w-full max-w-md p-6 relative z-10 scale-100 border border-white/50 ring-1 ring-white/50"><h3 class="text-lg font-bold text-slate-800 mb-4">Select Reporter</h3><select id="assign-reporter-select" class="w-full bg-white/50 border border-white/60 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm mb-4 shadow-sm"><option value="">Choose Name...</option></select><div class="flex justify-end gap-2"><button onclick="closeAssignSelector()" class="px-4 py-2 text-slate-600 hover:bg-white/50 rounded-lg text-sm transition">Cancel</button><button onclick="startAssignment()" class="px-4 py-2 bg-indigo-600/90 text-white rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 text-sm font-medium transition backdrop-blur-sm">Next</button></div></div></div>
     
-    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div><div class="bg-white rounded-xl shadow-2xl w-full sm:max-w-2xl p-5 relative z-10 border border-gray-200 max-h-[90vh] overflow-y-auto modal-scroll"><div class="flex justify-between items-center mb-4 pb-2 border-b sticky top-0 bg-white z-20"><div><h3 class="text-lg font-bold text-slate-800">Assign Issues</h3><p class="text-xs text-slate-500">Reporter: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p></div><button onclick="closeAssignModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-4"><input type="hidden" id="assign-row-index"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">ID</label><input type="text" id="assign-id" readonly class="w-full bg-slate-50 border border-slate-200 text-slate-600 font-bold p-2 rounded-lg text-sm"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Date</label><input type="text" id="assign-date" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm text-slate-600"></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><input type="text" id="assign-module" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm text-slate-600"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><input type="text" id="assign-priority" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg text-sm text-slate-600"></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="assign-desc" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm h-20 resize-none bg-white"></textarea></div><div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Attachment</span><div id="assign-link-container"><span class="text-slate-400 italic text-xs">None</span></div></div><div class="border-t pt-4"><label class="block text-sm font-bold text-indigo-700 mb-1">Assign Developer</label><input list="developers-list" id="assign-dev" required placeholder="Type or Select..." class="w-full border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"><datalist id="developers-list"></datalist></div><div class="flex justify-between pt-2 border-t mt-2"><button type="button" onclick="skipAssignment()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 text-sm font-medium">Skip</button><button type="submit" id="assign-submit-btn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md text-sm font-medium">Assign & Save</button></div></form></div></div>
+    <div id="statusSelectorModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeStatusSelector()"></div><div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] w-full max-w-md p-6 relative z-10 scale-100 border border-white/50 ring-1 ring-white/50"><h3 class="text-lg font-bold text-slate-800 mb-4">Select Reporter (Status Update)</h3><select id="status-reporter-select" class="w-full bg-white/50 border border-white/60 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm mb-4 shadow-sm"><option value="">Choose Name...</option></select><div class="flex justify-end gap-2"><button onclick="closeStatusSelector()" class="px-4 py-2 text-slate-600 hover:bg-white/50 rounded-lg text-sm transition">Cancel</button><button onclick="startStatusUpdate()" class="px-4 py-2 bg-emerald-600/90 text-white rounded-lg hover:bg-emerald-700 shadow-lg shadow-emerald-500/30 text-sm font-medium transition backdrop-blur-sm">Next</button></div></div></div>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxY5WJgEKokvv5oRa1Epa5rIDQxyfJzCAAqJeilfUh6HOla2-ZNZCakIQuk3UioZ-Ceeg/exec"; 
-        const DRIVE_FOLDER_ID = "16ikf8C9qSa-UFkaS7nvy4sj3slp5vsS0";
+    <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div><div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] w-full sm:max-w-2xl p-6 relative z-10 border border-white/50 max-h-[90vh] overflow-y-auto modal-scroll ring-1 ring-white/50"><div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-200/50 sticky top-0 bg-white/50 backdrop-blur-md z-20"><div><h3 class="text-lg font-bold text-slate-800">Assign Issues</h3><p class="text-xs text-slate-500">Reporter: <span id="assign-reporter-name" class="font-bold text-indigo-600"></span></p></div><button onclick="closeAssignModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="assignForm" onsubmit="submitAssignment(event)" class="space-y-4"><input type="hidden" id="assign-row-index"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">ID</label><input type="text" id="assign-id" readonly class="w-full bg-white/50 border border-white/60 text-slate-600 font-bold p-2 rounded-lg text-sm shadow-sm"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Date</label><input type="text" id="assign-date" readonly class="w-full bg-white/50 border border-white/60 p-2 rounded-lg text-sm text-slate-600 shadow-sm"></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><input type="text" id="assign-module" readonly class="w-full bg-white/50 border border-white/60 p-2 rounded-lg text-sm text-slate-600 shadow-sm"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><input type="text" id="assign-priority" readonly class="w-full bg-white/50 border border-white/60 p-2 rounded-lg text-sm text-slate-600 shadow-sm"></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="assign-desc" class="w-full bg-white/50 border border-white/60 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm h-20 resize-none shadow-sm focus:bg-white/80"></textarea></div><div class="bg-white/40 p-3 rounded-lg border border-white/50 shadow-inner flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Attachment</span><div id="assign-link-container"><span class="text-slate-400 italic text-xs">None</span></div></div><div class="border-t border-gray-200/50 pt-4"><label class="block text-sm font-bold text-indigo-700 mb-1">Assign Developer</label><input list="developers-list" id="assign-dev" required placeholder="Type or Select..." class="w-full bg-white/50 border border-indigo-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm"><datalist id="developers-list"></datalist></div><div class="flex justify-between pt-2 border-t border-gray-200/50 mt-2"><button type="button" onclick="skipAssignment()" class="px-4 py-2 bg-white/50 text-slate-600 rounded-lg hover:bg-white/80 text-sm font-medium transition border border-white/60 shadow-sm">Skip</button><button type="submit" id="assign-submit-btn" class="px-5 py-2 bg-indigo-600/90 text-white rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 text-sm font-medium transition backdrop-blur-sm">Assign & Save</button></div></form></div></div>
 
-        let allData = [];
-        let dateFilteredData = [];
-        let filteredData = [];
-        
-        let assignableIssues = []; 
-        let currentAssignIndex = 0; 
-        let currentPage = 1;
-        let rowsPerPage = 10;
-        let currentStatusFilter = 'Total';
-        let isTodayFilter = false;
-
-        window.onload = function() {
-            fetchData();
-            document.getElementById('rows-per-page').addEventListener('change', (e) => { rowsPerPage = +e.target.value; renderTable(); });
-            document.getElementById('prev-btn').addEventListener('click', () => { if(currentPage>1) {currentPage--; renderTable();} });
-            document.getElementById('next-btn').addEventListener('click', () => { if(currentPage < Math.ceil(filteredData.length/rowsPerPage)) {currentPage++; renderTable();} });
-            document.getElementById('global-search').addEventListener('input', applyFilters);
-            ['filter-module', 'filter-priority', 'filter-reported', 'filter-assignee'].forEach(id => { document.getElementById(id).addEventListener('change', applyFilters); });
-        };
-
-        async function fetchData() {
-            try {
-                const res = await fetch(SCRIPT_URL, { redirect: "follow" });
-                if (!res.ok) throw new Error("Failed");
-                const data = await res.json();
-                if(data.error) throw new Error(data.error);
-                
-                allData = data.sort((a, b) => parseInt(b.id) - parseInt(a.id)); 
-                filteredData = [...allData];
-                
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('dashboard-content').classList.remove('hidden');
-                document.getElementById('connection-status').innerText = "Connected";
-                document.getElementById('connection-status').className = "ml-auto sm:ml-4 text-[10px] sm:text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5";
-                
-                populateFilters(); 
-                document.getElementById('date-preset').value = 'all';
-                applyDatePreset();
-            } catch (err) {
-                console.error(err);
-                alert("Connection Error");
-            }
-        }
-
-        function switchToCustomDate() {
-            const presetSelect = document.getElementById('date-preset');
-            const customOpt = presetSelect.querySelector('option[value="custom"]');
-            if(customOpt) {
-                customOpt.classList.remove('hidden');
-                presetSelect.value = 'custom';
-            }
-            isTodayFilter = false;
-        }
-
-        function applyDatePreset() {
-            const preset = document.getElementById('date-preset').value;
-            const startInput = document.getElementById('date-start');
-            const endInput = document.getElementById('date-end');
-            isTodayFilter = (preset === 'today');
-
-            if(preset !== 'custom') {
-                 const customOpt = document.getElementById('date-preset').querySelector('option[value="custom"]');
-                 if(customOpt) customOpt.classList.add('hidden');
-            }
-
-            const getLocalStr = (d) => {
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            };
-
-            const today = new Date();
-            let start, end;
-
-            if (preset === 'today') {
-                start = end = today;
-            } else if (preset === 'week') {
-                const day = today.getDay();
-                const diff = today.getDate() - day + (day === 0 ? -6 : 1); 
-                start = new Date(today);
-                start.setDate(diff);
-                end = new Date(); 
-            } else if (preset === 'month') {
-                start = new Date(today.getFullYear(), today.getMonth(), 1);
-                end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            } else if (preset === 'all') {
-                startInput.value = ''; endInput.value = '';
-                applyFilters();
-                return;
-            } else {
-                return; 
-            }
-            startInput.value = getLocalStr(start);
-            endInput.value = getLocalStr(end);
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const filters = {
-                module: document.getElementById('filter-module').value,
-                priority: document.getElementById('filter-priority').value,
-                reported: document.getElementById('filter-reported').value,
-                assignee: document.getElementById('filter-assignee').value,
-                search: document.getElementById('global-search').value.toLowerCase(),
-                start: document.getElementById('date-start').value,
-                end: document.getElementById('date-end').value
-            };
-
-            // 1. First Filter by Date & Criteria (Independent of Status Card)
-            dateFilteredData = allData.filter(d => {
-                const matchesSearch = String(d.id).includes(filters.search) || 
-                                      String(d.description).toLowerCase().includes(filters.search) || 
-                                      String(d.module).toLowerCase().includes(filters.search) || 
-                                      String(d.reported).toLowerCase().includes(filters.search);
-                
-                let dateMatch = true;
-                if (filters.start || filters.end) {
-                    if (d.date) {
-                        const itemDateStr = d.date.substring(0, 10); 
-                        if (filters.start && itemDateStr < filters.start) dateMatch = false;
-                        if (filters.end && itemDateStr > filters.end) dateMatch = false;
-                    } else {
-                        dateMatch = false;
-                    }
-                }
-
-                return matchesSearch && dateMatch &&
-                       (!filters.module || d.module === filters.module) &&
-                       (!filters.priority || d.priority === filters.priority) &&
-                       (!filters.reported || d.reported === filters.reported) &&
-                       (!filters.assignee || d.assign === filters.assignee);
-            });
-
-            // 2. Update Header Stats from this base data
-            updateHeaderStats(dateFilteredData);
-
-            // 3. Now apply Status Filter for Table/Charts
-            filteredData = dateFilteredData.filter(d => {
-                let statusMatch = true;
-                if(currentStatusFilter !== 'Total') {
-                    const s = String(d.status || "").toLowerCase().trim();
-                    if(currentStatusFilter === 'Pending') statusMatch = s === 'pending';
-                    else if(currentStatusFilter === 'Done') statusMatch = s === 'done';
-                    else statusMatch = (s !== 'pending' && s !== 'done');
-                }
-                return statusMatch;
-            });
-
-            currentPage = 1; 
-            renderTable(); 
-            renderCharts(); 
-            renderTrendChart();
-        }
-
-        function updateHeaderStats(dataSet) {
-            let counts = { Total: 0, Pending: 0, Done: 0, Other: 0 };
-            dataSet.forEach(d => {
-                counts.Total++;
-                const s = String(d.status || "").toLowerCase().trim();
-                if(s === 'pending') counts.Pending++; 
-                else if(s === 'done') counts.Done++; 
-                else counts.Other++;
-            });
-            document.getElementById('count-total').innerText = counts.Total;
-            document.getElementById('count-pending').innerText = counts.Pending;
-            document.getElementById('count-done').innerText = counts.Done;
-            document.getElementById('count-other').innerText = counts.Other;
-
-            ['Total', 'Pending', 'Done', 'Other'].forEach(c => {
-                const el = document.getElementById(`card-${c}`);
-                if (currentStatusFilter === c) {
-                     el.classList.add('ring-2', c === 'Total' ? 'ring-gray-400' : (c === 'Pending' ? 'ring-yellow-400' : (c === 'Done' ? 'ring-emerald-400' : 'ring-purple-400')));
-                } else {
-                     el.classList.remove('ring-2', 'ring-gray-400', 'ring-yellow-400', 'ring-emerald-400', 'ring-purple-400');
-                }
-            });
-        }
-
-        function filterByStatus(status) { 
-            currentStatusFilter = status; 
-            applyFilters(); 
-        }
-        
-        function renderTrendChart() {
-            const canvas = document.getElementById('trendChart'); if(!canvas) return; const ctx = canvas.getContext('2d');
-            let labels = [], totalData = [], doneData = [], xLabel = "(Daily)";
-            
-            const dataToChart = filteredData; 
-            const startVal = document.getElementById('date-start').value;
-            const endVal = document.getElementById('date-end').value;
-            const isSingleDay = (startVal && endVal && startVal === endVal) || isTodayFilter;
-
-            if (isSingleDay) {
-                // Hourly Trend: Show ONLY Active Hours (30-min intervals if needed, but sticking to hours to avoid overcrowding)
-                // Actually user asked for 30-min if needed, but let's do hours first, ONLY where data exists.
-                xLabel = `(Active Hours for ${startVal || 'Today'})`;
-                
-                const hoursMap = {};
-                // Pre-fill? No, user said only active hours.
-                
-                dataToChart.forEach(d => {
-                   if(!d.date) return;
-                   try {
-                       // Format: YYYY-MM-DD HH:mm:ss
-                       const timePart = d.date.split(' ')[1]; // HH:mm:ss
-                       const hour = timePart.split(':')[0]; 
-                       const min = timePart.split(':')[1];
-                       
-                       // Create 30-min bucket key (e.g., "14:00", "14:30")
-                       const minBucket = parseInt(min) < 30 ? "00" : "30";
-                       const key = `${hour}:${minBucket}`;
-
-                       if(!hoursMap[key]) hoursMap[key] = { t: 0, d: 0 };
-                       hoursMap[key].t++;
-                       if(String(d.status).toLowerCase() === 'done') hoursMap[key].d++;
-                   } catch(e) {}
-                });
-                
-                labels = Object.keys(hoursMap).sort(); // Sort chronologically
-                totalData = labels.map(k => hoursMap[k].t);
-                doneData = labels.map(k => hoursMap[k].d);
-            } else {
-                const dateMap = {};
-                dataToChart.forEach(d => { 
-                    if(!d.date) return; 
-                    const dateKey = d.date.substring(0, 10); 
-                    if(!dateMap[dateKey]) dateMap[dateKey] = {t:0, d:0}; 
-                    dateMap[dateKey].t++; 
-                    if(String(d.status).toLowerCase()==='done') dateMap[dateKey].d++; 
-                });
-                labels = Object.keys(dateMap).sort();
-                totalData = labels.map(k=>dateMap[k].t);
-                doneData = labels.map(k=>dateMap[k].d);
-            }
-
-            document.getElementById('trend-label').innerText = xLabel;
-            if(window.trendC) window.trendC.destroy();
-            window.trendC = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{label:'Reported', data:totalData, borderColor:'#6366f1', backgroundColor:'rgba(99, 102, 241, 0.1)', tension:0.3, fill:true}, {label:'Done', data:doneData, borderColor:'#10b981', backgroundColor:'rgba(16, 185, 129, 0.1)', tension:0.3, fill:true}] }, options: { responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true, ticks:{precision:0}}} } });
-        }
-
-        function renderCharts() {
-            const pCounts = {}; const aCounts = {};
-            filteredData.forEach(d => { pCounts[d.priority||"Unknown"]=(pCounts[d.priority]||0)+1; const a=d.assign||"Unassigned"; aCounts[a]=(aCounts[a]||0)+1; });
-            const priorityParent = document.getElementById('priorityChart').parentNode; priorityParent.innerHTML = '<canvas id="priorityChart"></canvas>';
-            new Chart(document.getElementById('priorityChart'), { type: 'doughnut', data: { labels: Object.keys(pCounts), datasets: [{ data: Object.values(pCounts), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#6366f1'] }] }, options: { maintainAspectRatio: false } });
-            
-            const sortedAssignees = Object.entries(aCounts).sort((a,b)=>b[1]-a[1]);
-            const labelsSorted = sortedAssignees.map(item => item[0]); const dataSorted = sortedAssignees.map(item => item[1]);
-            const assignParent = document.getElementById('assigneeChart').parentNode; assignParent.innerHTML = '<canvas id="assigneeChart"></canvas>';
-            const barColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-            new Chart(document.getElementById('assigneeChart'), { type: 'bar', data: { labels: labelsSorted, datasets: [{ label: 'Tasks', data: dataSorted, backgroundColor: barColors, borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: {display:false} } } });
-        }
-
-        function populateFilters() {
-            const modules = new Set(allData.map(d => d.module)); const priorities = new Set(allData.map(d => d.priority)); const reported = new Set(allData.map(d => d.reported).filter(r => r && r.trim() !== "")); const assignees = new Set(allData.map(d => d.assign));
-            fillSelect('filter-module', modules); fillSelect('filter-priority', priorities); fillSelect('filter-reported', reported); fillSelect('filter-assignee', assignees);
-            const modSelect = document.getElementById('modal-module'); modSelect.innerHTML = '<option value="">Select Module</option>'; ['Employer', 'Candidate', 'Admin', 'Home Page'].forEach(m => modSelect.innerHTML += `<option value="${m}">${m}</option>`);
-            const priSelect = document.getElementById('modal-priority'); priSelect.innerHTML = '<option value="">Select Priority</option>'; ['High', 'Medium', 'Low', 'Critical'].forEach(p => priSelect.innerHTML += `<option value="${p}">${p}</option>`);
-            const repSelect = document.getElementById('modal-reporter'); repSelect.innerHTML = '<option value="">Select Reporter</option>'; Array.from(reported).sort().forEach(r => { repSelect.innerHTML += `<option value="${r}">${r}</option>`; });
-        }
-        function fillSelect(id, set) { const el = document.getElementById(id); el.innerHTML = '<option value="">All</option>'; set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; }); }
-        function calculateNextId() { if (allData.length === 0) return 1001; const ids = allData.map(row => parseInt(row.id)).filter(id => !isNaN(id)); const maxId = ids.length > 0 ? Math.max(...ids) : 1000; return maxId + 1; }
-        function openModal() { document.getElementById('issueModal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); document.getElementById('modal-id').value = calculateNextId(); populateFilters(); }
-        function closeModal() { document.getElementById('issueModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); document.getElementById('issueForm').reset(); document.getElementById('upload-progress-container').classList.add('hidden'); document.getElementById('upload-status-text').classList.add('hidden'); document.getElementById('file-name-display').innerText = "No file chosen"; }
-        function updateFileName() { const fileInput = document.getElementById('modal-file'); const display = document.getElementById('file-name-display'); if (fileInput.files.length > 0) display.innerText = fileInput.files[0].name; else display.innerText = "No file chosen"; }
-        async function submitIssue(e) {
-            e.preventDefault(); const btn = document.getElementById('submit-btn'); const fileInput = document.getElementById('modal-file'); let finalLink = document.getElementById('modal-link').value; btn.disabled = true; btn.innerText = "Processing...";
-            try {
-                if (fileInput.files.length > 0) {
-                    const tokenRes = await fetch(SCRIPT_URL + "?action=getToken"); const tokenData = await tokenRes.json();
-                    document.getElementById('upload-progress-container').classList.remove('hidden');
-                    const metadata = { name: fileInput.files[0].name, mimeType: fileInput.files[0].type, parents: [DRIVE_FOLDER_ID] };
-                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json' }, body: JSON.stringify(metadata) });
-                    if(!initRes.ok) throw new Error("Upload Init Failed");
-                    const locationUrl = initRes.headers.get('Location');
-                    const uploadedFile = await new Promise((resolve, reject) => { const xhr = new XMLHttpRequest(); xhr.open('PUT', locationUrl, true); xhr.onload = () => { if (xhr.status === 200 || xhr.status === 201) resolve(JSON.parse(xhr.responseText)); else reject("Upload Failed"); }; xhr.send(fileInput.files[0]); });
-                    finalLink = `https://drive.google.com/file/d/${uploadedFile.id}/view`;
-                }
-                const formData = { action: "submit", module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink };
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) });
-                const result = await res.json();
-                if(result.status === 'success') { alert("Saved!"); closeModal(); fetchData(); } else { throw new Error(result.message); }
-            } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.innerText = "Submit"; }
-        }
-
-        function openAssignSelector() { const reporters = new Set(allData.map(d => d.reported).filter(r => r)); const select = document.getElementById('assign-reporter-select'); select.innerHTML = '<option value="">Select...</option>'; reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`); document.getElementById('assignSelectorModal').classList.remove('hidden'); }
-        function closeAssignSelector() { document.getElementById('assignSelectorModal').classList.add('hidden'); }
-        function startAssignment() {
-            const reporter = document.getElementById('assign-reporter-select').value;
-            if(!reporter) { alert("Select a reporter"); return; }
-            assignableIssues = allData.filter(d => d.reported === reporter && (!d.assign || d.assign === "Unassigned" || d.assign.trim() === ""));
-            if(assignableIssues.length === 0) { alert("No issues found"); return; }
-            document.getElementById('assign-reporter-name').innerText = reporter; currentAssignIndex = 0;
-            const devList = document.getElementById('developers-list'); devList.innerHTML = '';
-            const assignees = new Set(allData.map(d => d.assign)); assignees.forEach(d => { if(d && d !== 'Unassigned') devList.innerHTML += `<option value="${d}">`; });
-            closeAssignSelector(); document.getElementById('assignModal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); loadAssignIssue();
-        }
-        function loadAssignIssue() {
-            if (currentAssignIndex >= assignableIssues.length) { alert("Done!"); closeAssignModal(); return; }
-            const issue = assignableIssues[currentAssignIndex];
-            document.getElementById('assign-id').value = issue.id; document.getElementById('assign-date').value = issue.date; document.getElementById('assign-module').value = issue.module; document.getElementById('assign-priority').value = issue.priority; document.getElementById('assign-desc').value = issue.description; document.getElementById('assign-row-index').value = issue.rowIndex; document.getElementById('assign-dev').value = ""; 
-            const linkDiv = document.getElementById('assign-link-container'); linkDiv.innerHTML = issue.link ? `<a href="${issue.link}" target="_blank" class="text-blue-600 text-xs">View File</a>` : '<span class="text-gray-400 text-xs">None</span>';
-        }
-        async function submitAssignment(e) {
-            e.preventDefault(); const btn = document.getElementById('assign-submit-btn'); btn.disabled = true; btn.innerText = 'Saving...';
-            const payload = { action: "update", notificationType: "assign", rowIndex: document.getElementById('assign-row-index').value, id: document.getElementById('assign-id').value, module: document.getElementById('assign-module').value, priority: document.getElementById('assign-priority').value, description: document.getElementById('assign-desc').value, assignee: document.getElementById('assign-dev').value };
-            try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await res.json(); if(result.status === 'success') { const t = assignableIssues[currentAssignIndex]; t.description = payload.description; t.assign = payload.assignee; currentAssignIndex++; loadAssignIssue(); } } catch(err) { alert("Error"); } finally { btn.disabled = false; btn.innerText = "Assign & Save"; }
-        }
-        function skipAssignment() { currentAssignIndex++; loadAssignIssue(); }
-        function closeAssignModal() { document.getElementById('assignModal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); fetchData(); }
-        
-        async function updateStatus(id, rowIndex, newStatus) {
-            const item = allData.find(d => d.id == id);
-            const payload = { action: "update", notificationType: "status", rowIndex, id, status: newStatus, module: item.module, priority: item.priority, reported: item.reported, description: item.description };
-            try { const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }); await res.json(); item.status = newStatus; updateHeaderStats(dateFilteredData); renderTable(); renderCharts(); renderTrendChart(); } catch(e) { alert("Update failed"); }
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
-            if(filteredData.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">No issues found matching criteria</td></tr>'; return; }
-            const start = (currentPage - 1) * rowsPerPage;
-            const pageData = filteredData.slice(start, start + rowsPerPage);
-            document.getElementById('pagination-info').innerText = `Showing ${start+1}-${Math.min(start+rowsPerPage, filteredData.length)} of ${filteredData.length}`;
-
-            // Unique Statuses for Dropdown
-            const statuses = Array.from(new Set(allData.map(d => String(d.status || "").trim()).filter(s => s))).sort();
-            if(!statuses.includes("Pending")) statuses.unshift("Pending"); // Ensure Pending exists
-            
-            pageData.forEach(row => {
-                let linkHtml = '<span class="text-slate-300 text-[10px]">None</span>';
-                if(String(row.link || "").includes('drive.google.com')) {
-                    const isDrive = true;
-                    const icon = '<i class="fa-brands fa-google-drive text-green-600"></i>';
-                    const text = 'Drive';
-                    linkHtml = `<a href="${row.link}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-200 rounded-full hover:shadow-sm hover:border-indigo-300 transition text-[10px] font-semibold text-slate-600 no-underline">${icon} ${text}</a>`;
-                } else if(row.link) {
-                    linkHtml = `<a href="${row.link}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-200 rounded-full hover:shadow-sm hover:border-indigo-300 transition text-[10px] font-semibold text-slate-600 no-underline"><i class="fa-solid fa-link text-blue-500"></i> Link</a>`;
-                }
-
-                let pColor = 'bg-slate-100 text-slate-600';
-                if(row.priority === 'High') pColor = 'bg-rose-50 text-rose-600 border border-rose-100';
-                else if(row.priority === 'Medium') pColor = 'bg-amber-50 text-amber-600 border border-amber-100';
-                else if(row.priority === 'Low') pColor = 'bg-emerald-50 text-emerald-600 border border-emerald-100';
-
-                // Status Dropdown
-                let statusHtml = `<select onchange="updateStatus('${row.id}', '${row.rowIndex}', this.value)" class="bg-transparent text-[10px] font-bold uppercase cursor-pointer border-none focus:ring-0 p-0 pr-4 w-24 truncate compact-select transition 
-                ${row.status === 'Done' ? 'text-green-600' : (row.status === 'Pending' ? 'text-yellow-600' : (row.status === 'Dropped' ? 'text-red-500' : 'text-slate-600'))} hover:text-indigo-600">`;
-                
-                if(!row.status) statusHtml += `<option value="" selected>--</option>`;
-                statuses.forEach(s => {
-                    statusHtml += `<option value="${s}" ${row.status === s ? 'selected' : ''}>${s}</option>`;
-                });
-                statusHtml += `</select>`;
-
-                tbody.innerHTML += `
-                    <tr class="border-b border-gray-50 hover:bg-indigo-50/30 transition duration-150 group">
-                        <td class="p-3 font-mono font-bold text-slate-500 text-[10px]">#${row.id}</td>
-                        <td class="p-3"><span class="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-[10px] font-bold">${row.module}</span></td>
-                        <td class="p-3 text-[10px] text-slate-500 whitespace-nowrap">${row.date}</td>
-                        <td class="p-3 text-slate-700 text-xs leading-snug min-w-[200px]">${row.description}</td>
-                        <td class="p-3">${linkHtml}</td>
-                        <td class="p-3"><span class="${pColor} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${row.priority}</span></td>
-                        <td class="p-3"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">${(row.assign || "U").charAt(0)}</div><span class="text-xs font-medium text-slate-600">${row.assign || "Unassigned"}</span></div></td>
-                        <td class="p-3"><div class="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded border border-slate-100 group-hover:border-indigo-200 transition"><i class="fa-solid fa-circle text-[6px] ${row.status === 'Done' ? 'text-green-400' : (row.status === 'Pending' ? 'text-yellow-400' : 'text-slate-300')}"></i>${statusHtml}</div></td>
-                    </tr>
-                `;
-            });
-        }
-    </script>
+    <div id="statusModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 sm:p-0"><div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div><div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] w-full sm:max-w-2xl p-6 relative z-10 border border-white/50 max-h-[90vh] overflow-y-auto modal-scroll ring-1 ring-white/50"><div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-200/50 sticky top-0 bg-white/50 backdrop-blur-md z-20"><div><h3 class="text-lg font-bold text-slate-800">Update Status</h3><p class="text-xs text-slate-500">Reporter: <span id="status-reporter-name" class="font-bold text-emerald-600"></span></p></div><button onclick="closeStatusModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="statusForm" onsubmit="submitStatusUpdate(event)" class="space-y-4"><input type="hidden" id="status-row-index"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">ID</label><input type="text" id="status-id" readonly class="w-full bg-white/50 border border-white/60 text-slate-600 font-bold p-2 rounded-lg text-sm shadow-sm"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Date</label><input type="text" id="status-date" readonly class="w-full bg-white/50 border border-white/60 p-2 rounded-lg text-sm text-slate-600 shadow-sm"></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Module</label><input type="text" id="status-module" readonly class="w-full bg-white/50 border border-white/60 p-2 rounded-lg text-sm text-slate-600 shadow-sm"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Priority</label><input type="text" id="status-priority" readonly class="w-full bg-white/50 border border-white/60 p-2 rounded-lg text-sm text-slate-600 shadow-sm"></div></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label><textarea id="status-desc" readonly class="w-full bg-white/50 border border-white/60 p-2.5 rounded-lg text-sm h-20 resize-none shadow-sm focus:bg-white/80"></textarea></div><div class="bg-white/40 p-3 rounded-lg border border-white/50 shadow-inner flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Attachment</span><div id="status-link-container"><span class="text-slate-400 italic text-xs">None</span></div></div><div class="border-t border-gray-200/50 pt-4"><label class="block text-sm font-bold text-emerald-700 mb-1">New Status</label><select id="status-select" class="w-full bg-white/50 border border-emerald-300 p-2.5 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm shadow-sm"><option value="Pending">Pending</option><option value="Done">Done</option><option value="Dropped">Dropped</option></select></div><div class="flex justify-between pt-2 border-t border-gray-200/50 mt-2"><button type="button" onclick="skipStatusUpdate()" class="px-4 py-2 bg-white/50 text-slate-600 rounded-lg hover:bg-white/80 text-sm font-medium transition border border-white/60 shadow-sm">Skip</button><button type="submit" id="status-submit-btn" class="px-5 py-2 bg-emerald-600/90 text-white rounded-lg hover:bg-emerald-700 shadow-lg shadow-emerald-500/30 text-sm font-medium transition backdrop-blur-sm">Update & Save</button></div></form></div></div>
 </body>
 </html>

@@ -1,5 +1,5 @@
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwi1bgpMrZfVmypXdfs3W8S-lvXSAVDYUe9AhtKZMztA4BdPwsv79w95ASw9K5ajJzG/exec"; 
-        const DRIVE_FOLDER_ID = "16ikf8C9qSa-UFkaS7nvy4sj3slp5vsS0";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6_xti7mQoVhzprmLD0oloI4e-mfZ02J9YNzhsoGNSsdEU3mEYkmUKt5DqBjQMUDCQ/exec"; 
+        const DRIVE_FOLDER_ID = "1RUpCrU7JghE3_iRV0gEXgwNjkUWfXf7a";
         
         // FAST LOAD CONFIGURATION
         const API_KEY = "AIzaSyAZwajn0BxvTqZdO4mqV-ut1-DnTqvfDp8"; // Yahan apni API Key dalein
@@ -31,15 +31,8 @@
         async function fetchData() {
             try {
                 let data = [];
-                // Method 1: Try Direct Google Sheets API (Fastest)
-                if (API_KEY && API_KEY !== "YOUR_GOOGLE_API_KEY") {
-                    // Direct API call - No fallback to script to ensure speed
-                    data = await fetchFromAPI();
-                    console.log("Success: Data loaded via Google Sheets API");
-                } else {
-                    // Method 2: Fallback to Apps Script
-                    data = await fetchFromScript();
-                }
+                data = await fetchFromAPI();
+                console.log("Success: Data loaded via Google Sheets API");
                 
                 allData = data.sort((a, b) => {
                     const idA = parseInt(a.id);
@@ -62,14 +55,6 @@
                 console.error(err);
                 alert("Connection Error");
             }
-        }
-
-        async function fetchFromScript() {
-            const res = await fetch(SCRIPT_URL, { redirect: "follow" });
-            if (!res.ok) throw new Error("Failed");
-            const json = await res.json();
-            if(json.error) throw new Error(json.error);
-            return json;
         }
 
         async function fetchFromAPI() {
@@ -422,14 +407,20 @@
                     const tokenRes = await fetch(SCRIPT_URL + "?action=getToken"); const tokenData = await tokenRes.json();
                     document.getElementById('upload-progress-container').classList.remove('hidden');
                     document.getElementById('upload-status-text').classList.remove('hidden');
-                    const metadata = { name: fileInput.files[0].name, mimeType: fileInput.files[0].type, parents: [DRIVE_FOLDER_ID] };
-                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json' }, body: JSON.stringify(metadata) });
+                    const file = fileInput.files[0];
+                    const contentType = file.type || 'application/octet-stream';
+                    const metadata = { name: file.name, mimeType: contentType, parents: [DRIVE_FOLDER_ID] };
+                    // Added supportsAllDrives=true to handle Shared Drives/Permissions better
+                    const initRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&supportsAllDrives=true', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tokenData.token, 'Content-Type': 'application/json', 'X-Upload-Content-Type': contentType }, body: JSON.stringify(metadata) });
                     if(!initRes.ok) throw new Error("Upload Init Failed");
                     const locationUrl = initRes.headers.get('Location');
+                    
+                    if (!locationUrl) throw new Error("Upload URL not found. CORS issue or Blocked.");
                     
                     const uploadedFile = await new Promise((resolve, reject) => { 
                         const xhr = new XMLHttpRequest(); 
                         xhr.open('PUT', locationUrl, true); 
+                        xhr.setRequestHeader('Content-Type', contentType); // Explicitly set Content-Type
                         xhr.upload.onprogress = (e) => {
                             if (e.lengthComputable) {
                                 const percent = Math.round((e.loaded / e.total) * 100);
@@ -445,18 +436,34 @@
                 } catch (err) { alert(err.message); btn.disabled = false; btn.innerText = "Submit"; return; }
             }
 
-            // Optimistic UI Update (Instant Save)
-            try {
-                const rowIndex = document.getElementById('modal-row-index').value;
-                let formData;
-                const now = new Date();
-                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            // Prepare Data
+            const rowIndex = document.getElementById('modal-row-index').value;
+            let formData;
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
+            if (rowIndex) {
+                const existingItem = allData.find(d => d.rowIndex == rowIndex);
+                formData = { action: "update", rowIndex: rowIndex, id: document.getElementById('modal-id').value, date: existingItem ? existingItem.date : dateStr, module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink, status: existingItem ? (existingItem.status || "") : "" };
+            } else {
+                formData = { action: "submit", id: document.getElementById('modal-id').value, date: dateStr, module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink };
+            }
+
+            // Send to Backend (Wait for response to ensure save)
+            try {
+                const saveRes = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData), headers: { "Content-Type": "text/plain" } });
+                
+                if (!saveRes.ok) {
+                    const text = await saveRes.text();
+                    throw new Error(`Server Error (${saveRes.status}): ${text.substring(0, 100)}`);
+                }
+
+                const saveJson = await saveRes.json();
+                if(saveJson.status !== 'success') throw new Error(saveJson.message || "Save Failed");
+
+                // Update Local Data & UI only after success
                 if (rowIndex) {
                     const existingItem = allData.find(d => d.rowIndex == rowIndex);
-                    formData = { action: "update", rowIndex: rowIndex, id: document.getElementById('modal-id').value, date: existingItem ? existingItem.date : dateStr, module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink, status: existingItem ? (existingItem.status || "") : "" };
-                    
-                    // Update Local Data Immediately
                     if(existingItem) {
                         existingItem.module = formData.module;
                         existingItem.priority = formData.priority;
@@ -465,11 +472,8 @@
                         existingItem.link = formData.link;
                     }
                 } else {
-                    formData = { action: "submit", id: document.getElementById('modal-id').value, date: dateStr, module: document.getElementById('modal-module').value, priority: document.getElementById('modal-priority').value, reported: document.getElementById('modal-reporter').value, description: document.getElementById('modal-desc').value, link: finalLink };
-                    
-                    // Add to Local Data Immediately
                     allData.unshift({
-                        rowIndex: Date.now(), // Temp ID
+                        rowIndex: Date.now(),
                         id: String(formData.id),
                         module: formData.module,
                         link: formData.link,
@@ -482,15 +486,16 @@
                     });
                 }
                 
-                // Update UI
                 applyFilters();
                 closeModal();
-                alert("Saved!"); // Instant feedback
-
-                // Send to Backend in Background
-                fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) }).catch(e => console.error("Background Sync Error", e));
-
-            } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.innerText = "Submit"; }
+                alert("Saved Successfully!");
+            } catch (err) { 
+                console.error(err);
+                alert("Error Saving Data: " + err.message); 
+            } finally { 
+                btn.disabled = false; 
+                btn.innerText = "Submit"; 
+            }
         }
 
         function openAssignSelector() { const reporters = new Set(allData.map(d => d.reported).filter(r => r)); const select = document.getElementById('assign-reporter-select'); select.innerHTML = '<option value="">Select...</option>'; reporters.forEach(r => select.innerHTML += `<option value="${r}">${r}</option>`); document.getElementById('assignSelectorModal').classList.remove('hidden'); }

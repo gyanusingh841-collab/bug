@@ -2,7 +2,7 @@
         const DRIVE_FOLDER_ID = "1RUpCrU7JghE3_iRV0gEXgwNjkUWfXf7a";
         
         // FAST LOAD CONFIGURATION
-        const API_KEY = "AIzaSyAZwajn0BxvTqZdO4mqV-ut1-DnTqvfDp8"; // Yahan apni API Key dalein
+        const API_KEY = ""; // Yahan apni API Key dalein
         const SHEET_ID = "1rZJ7Tu-huQi_EVVSjjy7uhUumaxbM08WwsKjtjYJCn0";
         const SHEET_NAME = "Website Issues"; // Sheet ka naam exact hona chahiye
 

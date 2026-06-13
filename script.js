@@ -1,9 +1,9 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6_xti7mQoVhzprmLD0oloI4e-mfZ02J9YNzhsoGNSsdEU3mEYkmUKt5DqBjQMUDCQ/exec"; 
-        const DRIVE_FOLDER_ID = "1RUpCrU7JghE3_iRV0gEXgwNjkUWfXf7a";
+        const DRIVE_FOLDER_ID = "";
         
         // FAST LOAD CONFIGURATION
         const API_KEY = ""; // Yahan apni API Key dalein
-        const SHEET_ID = "1rZJ7Tu-huQi_EVVSjjy7uhUumaxbM08WwsKjtjYJCn0";
+        const SHEET_ID = "";
         const SHEET_NAME = "Website Issues"; // Sheet ka naam exact hona chahiye
 
         let allData = [];
